@@ -3858,7 +3858,7 @@ void Zombie::DropHead(unsigned int theDamageFlags)
     {
         DropFlag();
     }
-    else if (mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX)
+    /*else if (mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX)
     {
         DropJackInTheBox();
     }
@@ -3866,7 +3866,7 @@ void Zombie::DropHead(unsigned int theDamageFlags)
     {
         DiggerLoseAxe();
         DropDiggerAxe();
-    }
+    }*/
 
     TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, aEffect);
     OverrideParticleColor(aParticle);
