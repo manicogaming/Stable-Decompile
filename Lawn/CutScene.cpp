@@ -348,7 +348,7 @@ void CutScene::PreloadResources()
 
 	for (int aWave = 0; aWave < mBoard->mNumWaves; aWave++)
 	{
-		for (int aZombieIndex = 0; aZombieIndex < MAX_ZOMBIES_IN_WAVE; aZombieIndex++)
+		for (int aZombieIndex = 0; aZombieIndex < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; aZombieIndex++)
 		{
 			ZombieType aZombieType = mBoard->mZombiesInWave[aWave][aZombieIndex];
 			if (aZombieType == ZombieType::ZOMBIE_INVALID)
@@ -519,11 +519,11 @@ void CutScene::PlaceStreetZombies()
 	int aZombieValueTotal = 0;
 	int aTotalZombieCount = 0;
 	int aZombieTypeCount[(int)ZombieType::NUM_ZOMBIE_TYPES] = { 0 };
-	TOD_ASSERT(mBoard->mNumWaves <= MAX_ZOMBIE_WAVES);
+	TOD_ASSERT(mBoard->mNumWaves <= mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIE_WAVES_ENDLESS : MAX_ZOMBIE_WAVES);
 
 	for (int aWave = 0; aWave < mBoard->mNumWaves; aWave++)
 	{
-		for (int aZombieIndex = 0; aZombieIndex < MAX_ZOMBIES_IN_WAVE; aZombieIndex++)
+		for (int aZombieIndex = 0; aZombieIndex < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; aZombieIndex++)
 		{
 			ZombieType aZombieType = mBoard->mZombiesInWave[aWave][aZombieIndex];
 			if (aZombieType == ZombieType::ZOMBIE_INVALID)

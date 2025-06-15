@@ -3110,7 +3110,7 @@ void Challenge::SpawnZombieWave()
 	if (mApp->IsContinuousChallenge() && mBoard->mCurrentWave == mBoard->mNumWaves)
 	{
 		mBoard->mCurrentWave = mBoard->mNumWaves - 1;
-		for (int i = 0; i < MAX_ZOMBIES_IN_WAVE; i++)
+		for (int i = 0; i < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; i++)
 		{
 			ZombieType aWaveZombie = mBoard->mZombiesInWave[mBoard->mCurrentWave][i];
 			if (aWaveZombie == ZOMBIE_INVALID)

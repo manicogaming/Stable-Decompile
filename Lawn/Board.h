@@ -18,7 +18,9 @@ using namespace Sexy;
 #define MAX_GRID_SIZE_X 9
 #define MAX_GRID_SIZE_Y 6
 #define MAX_ZOMBIES_IN_WAVE 50
+#define MAX_ZOMBIES_IN_WAVE_ENDLESS 250
 #define MAX_ZOMBIE_WAVES 100
+#define MAX_ZOMBIE_WAVES_ENDLESS 500
 #define MAX_GRAVE_STONES MAX_GRID_SIZE_X * MAX_GRID_SIZE_Y
 #define MAX_POOL_GRID_SIZE 10
 #define MAX_RENDER_ITEMS 2048
@@ -139,7 +141,7 @@ public:
 	int								mIceTimer[MAX_GRID_SIZE_Y];								//+0x624
 	ParticleSystemID				mIceParticleID[MAX_GRID_SIZE_Y];						//+0x63C
 	TodSmoothArray					mRowPickingArray[MAX_GRID_SIZE_Y];						//+0x654
-	ZombieType						mZombiesInWave[MAX_ZOMBIE_WAVES][MAX_ZOMBIES_IN_WAVE];	//+0x6B4
+	ZombieType						mZombiesInWave[MAX_ZOMBIE_WAVES_ENDLESS][MAX_ZOMBIES_IN_WAVE_ENDLESS];	//+0x6B4
 	bool							mZombieAllowed[100];									//+0x54D4
 	int								mSunCountDown;											//+0x5538
 	int								mNumSunsFallen;											//+0x553C

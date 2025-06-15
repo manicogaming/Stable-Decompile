@@ -583,9 +583,9 @@ void ZombiePickerInit(ZombiePicker* theZombiePicker)
 //0x409240
 void Board::PutZombieInWave(ZombieType theZombieType, int theWaveNumber, ZombiePicker* theZombiePicker)
 {
-	TOD_ASSERT(theWaveNumber < MAX_ZOMBIE_WAVES && theZombiePicker->mZombieCount < MAX_ZOMBIES_IN_WAVE);
+	TOD_ASSERT(theWaveNumber < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIE_WAVES_ENDLESS : MAX_ZOMBIE_WAVES && theZombiePicker->mZombieCount < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE);
 	mZombiesInWave[theWaveNumber][theZombiePicker->mZombieCount++] = theZombieType;
-	if (theZombiePicker->mZombieCount < MAX_ZOMBIES_IN_WAVE)
+	if (theZombiePicker->mZombieCount < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE)
 	{
 		mZombiesInWave[theWaveNumber][theZombiePicker->mZombieCount] = ZombieType::ZOMBIE_INVALID;
 	}
@@ -664,7 +664,7 @@ void Board::PickZombieWaves()
 	ZombiePicker aZombiePicker;
 	ZombiePickerInit(&aZombiePicker);
 	ZombieType aIntroZombieType = GetIntroducedZombieType();
-	TOD_ASSERT(mNumWaves <= MAX_ZOMBIE_WAVES);
+	TOD_ASSERT(mNumWaves <= mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIE_WAVES_ENDLESS : MAX_ZOMBIE_WAVES);
 
 	// ====================================================================================================
 	// ▲ 遍历每一波并填充每波的出怪列表
@@ -858,7 +858,7 @@ void Board::PickZombieWaves()
 		// ------------------------------------------------------------------------------------------------
 		// △ 剩余的僵尸点数用于向列表中补充随机僵尸
 		// ------------------------------------------------------------------------------------------------
-		while (aZombiePoints > 0 && aZombiePicker.mZombieCount < MAX_ZOMBIES_IN_WAVE)
+		while (aZombiePoints > 0 && aZombiePicker.mZombieCount < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE)
 		{
 			ZombieType aZombieType = PickZombieType(aZombiePoints, aWave, &aZombiePicker);
 			if (aZombieType == ZombieType::ZOMBIE_INVALID) break;
@@ -1281,7 +1281,7 @@ bool Board::IsZombieWaveDistributionOk()
 	int aZombieTypeCount[(int)ZombieType::NUM_ZOMBIE_TYPES] = { 0 };
 	for (int aWave = 0; aWave < mNumWaves; aWave++)
 	{
-		for (int aIndex = 0; aIndex < MAX_ZOMBIES_IN_WAVE; aIndex++)
+		for (int aIndex = 0; aIndex < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; aIndex++)
 		{
 			ZombieType aZombieType = mZombiesInWave[aWave][aIndex];
 			if (aZombieType == ZombieType::ZOMBIE_INVALID)
@@ -5360,7 +5360,7 @@ void Board::SpawnZombieWave()
 	{
 		BungeeDropGrid aBungeeDropGrid;
 		SetupBungeeDrop(&aBungeeDropGrid);
-		for (int i = 0; i < MAX_ZOMBIES_IN_WAVE; i++)
+		for (int i = 0; i < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; i++)
 		{
 			ZombieType aZombieType = mZombiesInWave[mCurrentWave][i];
 			if (aZombieType == ZombieType::ZOMBIE_INVALID)
@@ -5378,8 +5378,8 @@ void Board::SpawnZombieWave()
 	}
 	else
 	{
-		TOD_ASSERT(mCurrentWave >= 0 && mCurrentWave < MAX_ZOMBIE_WAVES && mCurrentWave < mNumWaves);
-		for (int i = 0; i < MAX_ZOMBIES_IN_WAVE; i++)
+		TOD_ASSERT(mCurrentWave >= 0 && mCurrentWave < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIE_WAVES_ENDLESS : MAX_ZOMBIE_WAVES && mCurrentWave < mNumWaves);
+		for (int i = 0; i < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; i++)
 		{
 			ZombieType aZombieType = mZombiesInWave[mCurrentWave][i];
 			if (aZombieType == ZombieType::ZOMBIE_INVALID)
@@ -9429,7 +9429,7 @@ void Board::KeyChar(SexyChar theChar)
 	}
 	if (theChar == _S('w'))
 	{
-		AddZombie(ZombieType::ZOMBIE_NEWSPAPER, Zombie::ZOMBIE_WAVE_DEBUG);
+		AddZombie(ZombieType::ZOMBIE_PAIL_DOOR, Zombie::ZOMBIE_WAVE_DEBUG);
 		return;
 	}
 	if (theChar == _S('F'))
@@ -10960,9 +10960,9 @@ int Board::CountZombieByType(ZombieType theZombieType)
 
 int Board::NumberZombiesInWave(int theWaveIndex)
 {
-	TOD_ASSERT(theWaveIndex >= 0 && theWaveIndex < MAX_ZOMBIE_WAVES && theWaveIndex < mNumWaves);
+	TOD_ASSERT(theWaveIndex >= 0 && theWaveIndex < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIE_WAVES_ENDLESS : MAX_ZOMBIE_WAVES && theWaveIndex < mNumWaves);
 
-	for (int i = 0; i < MAX_ZOMBIES_IN_WAVE; i++)
+	for (int i = 0; i < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; i++)
 	{
 		if (mZombiesInWave[theWaveIndex][i] == ZombieType::ZOMBIE_INVALID)
 		{
@@ -10976,7 +10976,8 @@ int Board::NumberZombiesInWave(int theWaveIndex)
 
 bool Board::IsZombieTypeSpawnedOnly(ZombieType theZombieType)
 {
-	return (theZombieType == ZombieType::ZOMBIE_BACKUP_DANCER  || theZombieType == ZombieType::ZOMBIE_BOBSLED || theZombieType == ZombieType::ZOMBIE_IMP);
+	return (theZombieType == ZombieType::ZOMBIE_BACKUP_DANCER  || theZombieType == ZombieType::ZOMBIE_BOBSLED ||
+		theZombieType == ZombieType::ZOMBIE_DOG_WALKER || theZombieType == ZombieType::ZOMBIE_DOG || theZombieType == ZombieType::ZOMBIE_PROPELLER);
 }
 
 int Board::NukeBoard()

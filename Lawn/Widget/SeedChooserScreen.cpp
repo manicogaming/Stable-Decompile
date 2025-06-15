@@ -725,7 +725,7 @@ bool SeedChooserScreen::FlyersAreComming()
 {
 	for (int aWave = 0; aWave < mBoard->mNumWaves; aWave++)
 	{
-		for (int anIndex = 0; anIndex < MAX_ZOMBIES_IN_WAVE; anIndex++)
+		for (int anIndex = 0; anIndex < mApp->IsSurvivalEndless(mApp->mGameMode) ? MAX_ZOMBIES_IN_WAVE_ENDLESS : MAX_ZOMBIES_IN_WAVE; anIndex++)
 		{
 			ZombieType aZombieType = mBoard->mZombiesInWave[aWave][anIndex];
 			if (aZombieType == ZOMBIE_INVALID)

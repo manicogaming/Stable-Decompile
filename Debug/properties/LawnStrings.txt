@@ -1216,6 +1216,24 @@ Trashcan Zombie
 [TRASHCAN_ZOMBIE_DESCRIPTION]
 Trashcan Zombie description
 
+[ANGRY_ZOMBIE]
+Angry Zombie
+
+[ANGRY_ZOMBIE_DESCRIPTION]
+Angry Zombie description
+
+[SCREEN_DOOR_CONE_ZOMBIE]
+Screen Door Conehead Zombie
+
+[SCREEN_DOOR_CONE_ZOMBIE_DESCRIPTION]
+Screen Door Conehead Zombie description
+
+[SCREEN_DOOR_PAIL_ZOMBIE]
+Screen Door Buckethead Zombie
+
+[SCREEN_DOOR_PAIL_ZOMBIE_DESCRIPTION]
+Screen Door Buckethead Zombie description
+
 [CRAZY_DAVE_201]
 Evening, {PLAYER_NAME}.
 [CRAZY_DAVE_202]
