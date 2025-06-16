@@ -2859,8 +2859,8 @@ void Challenge::InitZombieWaves()
 		if (mSurvivalStage >= 1)	aList[ZOMBIE_POLEVAULTER] = true;
 		if (mSurvivalStage >= 2)	aList[ZOMBIE_PAIL] = true;
 		if (mSurvivalStage >= 3)	aList[ZOMBIE_DOOR] = true;
-		if (mSurvivalStage >= 4)	aList[ZOMBIE_SNORKEL] = true;
-		if (mSurvivalStage >= 5)	aList[ZOMBIE_DOLPHIN_RIDER] = true;
+		if (mSurvivalStage >= 4 && mBoard->StageHasPool())	aList[ZOMBIE_SNORKEL] = true;
+		if (mSurvivalStage >= 5 && mBoard->StageHasPool())	aList[ZOMBIE_DOLPHIN_RIDER] = true;
 		if (mSurvivalStage >= 6)	aList[ZOMBIE_FOOTBALL] = true;
 		if (mSurvivalStage >= 7)	aList[ZOMBIE_BALLOON] = true;
 		if (mSurvivalStage >= 8)	aList[ZOMBIE_JACK_IN_THE_BOX] = true;
