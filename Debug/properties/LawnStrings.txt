@@ -1234,6 +1234,18 @@ Screen Door Buckethead Zombie
 [SCREEN_DOOR_PAIL_ZOMBIE_DESCRIPTION]
 Screen Door Buckethead Zombie description
 
+[TRASHCAN_CONE_ZOMBIE]
+Trashcan Conehead Zombie
+
+[TRASHCAN_CONE_ZOMBIE_DESCRIPTION]
+Trashcan Conehead Zombie description
+
+[TRASHCAN_PAIL_ZOMBIE]
+Trashcan BucketheadZombie
+
+[TRASHCAN_PAIL_ZOMBIE_DESCRIPTION]
+Trashcan Buckethead Zombie description
+
 [CRAZY_DAVE_201]
 Evening, {PLAYER_NAME}.
 [CRAZY_DAVE_202]

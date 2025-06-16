@@ -60,6 +60,8 @@ ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES] = {  //0x69DA80
     { ZOMBIE_ANGRY,             REANIM_ZOMBIE,              1,      99,      1,     5000,   _S("ANGRY_ZOMBIE") },
     { ZOMBIE_CONE_DOOR,         REANIM_ZOMBIE,              5,      99,     5,      4000,   _S("SCREEN_DOOR_CONE_ZOMBIE") },
     { ZOMBIE_PAIL_DOOR,         REANIM_ZOMBIE,              6,      99,     5,      4500,   _S("SCREEN_DOOR_PAIL_ZOMBIE") },
+    { ZOMBIE_CONE_TRASHCAN,     REANIM_ZOMBIE,              5,      99,     5,      4000,   _S("TRASHCAN_CONE_ZOMBIE") },
+    { ZOMBIE_PAIL_TRASHCAN,     REANIM_ZOMBIE,              6,      99,     5,      4500,   _S("TRASHCAN_PAIL_ZOMBIE") },
 };
 
 static ZombieType gBossZombieList[] = {  //0x69DE1C
@@ -219,6 +221,8 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
     case ZombieType::ZOMBIE_TRASHCAN:
     case ZombieType::ZOMBIE_CONE_DOOR:
     case ZombieType::ZOMBIE_PAIL_DOOR:
+    case ZombieType::ZOMBIE_CONE_TRASHCAN:
+    case ZombieType::ZOMBIE_PAIL_TRASHCAN:
         mShieldType = ShieldType::SHIELDTYPE_DOOR;
         mShieldHealth = 1100;
         if (mZombieType == ZombieType::ZOMBIE_TRASHCAN)
@@ -240,6 +244,30 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
             mHelmType = HelmType::HELMTYPE_BUCKET;
             mHelmHealth = 1100;
             AttachHelmet();
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_CONE_TRASHCAN)
+        {
+            mHelmType = HelmType::HELMTYPE_TRAFFIC_CONE;
+            mHelmHealth = 1100;
+            AttachHelmet();
+
+            mShieldType = ShieldType::SHIELDTYPE_TRASHCAN;
+            mShieldHealth = 2200;
+
+            Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+            aBodyReanim->SetImageOverride("anim_screendoor", IMAGE_REANIM_ZOMBIE_TRASHCAN1);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_PAIL_TRASHCAN)
+        {
+            mHelmType = HelmType::HELMTYPE_BUCKET;
+            mHelmHealth = 1100;
+            AttachHelmet();
+
+            mShieldType = ShieldType::SHIELDTYPE_TRASHCAN;
+            mShieldHealth = 2200;
+
+            Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+            aBodyReanim->SetImageOverride("anim_screendoor", IMAGE_REANIM_ZOMBIE_TRASHCAN1);
         }
         LoadPlainZombieReanim();
         AttachShield();
@@ -1022,13 +1050,13 @@ void Zombie::SetupReanimLayers(Reanimation* aReanim, ZombieType theZombieType)
     {
         aReanim->AssignRenderGroupToPrefix("Zombie_duckytube", RENDER_GROUP_NORMAL);
     }
-    else if (theZombieType == ZombieType::ZOMBIE_CONE_DOOR)
+    else if (theZombieType == ZombieType::ZOMBIE_CONE_DOOR || theZombieType == ZombieType::ZOMBIE_CONE_TRASHCAN)
     {
         aReanim->AssignRenderGroupToPrefix("anim_cone", RENDER_GROUP_NORMAL);
         aReanim->AssignRenderGroupToPrefix("anim_hair", RENDER_GROUP_HIDDEN);
         SetupDoorArms(aReanim, true);
     }
-    else if (theZombieType == ZombieType::ZOMBIE_PAIL_DOOR)
+    else if (theZombieType == ZombieType::ZOMBIE_PAIL_DOOR || theZombieType == ZombieType::ZOMBIE_PAIL_TRASHCAN)
     {
         aReanim->AssignRenderGroupToPrefix("anim_bucket", RENDER_GROUP_NORMAL);
         aReanim->AssignRenderGroupToPrefix("anim_hair", RENDER_GROUP_HIDDEN);
@@ -5217,13 +5245,15 @@ bool Zombie::HasYuckyFaceImage()
             mZombieType == ZombieType::ZOMBIE_FLAG ||
             mZombieType == ZombieType::ZOMBIE_DOOR ||
             mZombieType == ZombieType::ZOMBIE_TRASHCAN ||
-            mZombieType == ZombieType::ZOMBIE_DUCKY_TUBE) ||
+            mZombieType == ZombieType::ZOMBIE_DUCKY_TUBE ||
+            mZombieType == ZombieType::ZOMBIE_CONE_DOOR ||
+            mZombieType == ZombieType::ZOMBIE_PAIL_DOOR ||
+            mZombieType == ZombieType::ZOMBIE_CONE_TRASHCAN ||
+            mZombieType == ZombieType::ZOMBIE_PAIL_TRASHCAN) ||
         mZombieType == ZombieType::ZOMBIE_DANCER || 
         mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER || 
         mZombieType == ZombieType::ZOMBIE_NEWSPAPER || 
-        mZombieType == ZombieType::ZOMBIE_POLEVAULTER ||
-        mZombieType == ZombieType::ZOMBIE_CONE_DOOR ||
-        mZombieType == ZombieType::ZOMBIE_PAIL_DOOR;
+        mZombieType == ZombieType::ZOMBIE_POLEVAULTER;
 }
 
 //0x52B5B0
@@ -10521,6 +10551,8 @@ void Zombie::UpdateDeath()
         case ZombieType::ZOMBIE_ANGRY:
         case ZombieType::ZOMBIE_CONE_DOOR:
         case ZombieType::ZOMBIE_PAIL_DOOR:
+        case ZombieType::ZOMBIE_CONE_TRASHCAN:
+        case ZombieType::ZOMBIE_PAIL_TRASHCAN:
             if (aBodyReanim->IsAnimPlaying("anim_superlongdeath"))
             {
                 aFallTime = 0.788f;
