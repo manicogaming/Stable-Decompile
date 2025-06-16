@@ -1603,23 +1603,30 @@ void Zombie::PogoBreak(unsigned int theDamageFlags)
 		//ZombieDrawPosition aDrawPos;
 		//GetDrawPos(aDrawPos);
 
-		float aPosX, aPosY;
-		GetTrackPosition("Zombie_pogo_stick", aPosX, aPosY);
-		TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY + 30.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_ZOMBIE_POGO);
-		if (aParticle)
-		{
-			for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
-			{
-				TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
-				aEmitter->mSystemCenter.y += mAltitude;
-				aEmitter->mSystemCenter.y -= 30.0f;
-				aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
-			}
+        float aPosX, aPosY;
+        GetTrackPosition("Zombie_pogo_stick", aPosX, aPosY);
+        TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY + 30.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_ZOMBIE_POGO);
+        if (aParticle)
+        {
+            Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+            if (aBodyReanim)
+            {
+                aParticle->OverrideExtraAdditiveDraw(nullptr, aBodyReanim->mEnableExtraAdditiveDraw);
+                aParticle->OverrideExtraAdditiveColor(nullptr, aBodyReanim->mExtraAdditiveColor);
+            }
 
-			OverrideParticleColor(aParticle);
-			OverrideParticleScale(aParticle);
-		}
-	}
+            for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+            {
+                TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
+                aEmitter->mSystemCenter.y += mAltitude;
+                aEmitter->mSystemCenter.y -= 30.0f;
+                aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
+            }
+            
+            OverrideParticleColor(aParticle);
+            OverrideParticleScale(aParticle);
+        }
+    }
 
 	TOD_ASSERT(mZombiePhase != ZombiePhase::PHASE_ZOMBIE_DYING && mZombiePhase != ZombiePhase::PHASE_ZOMBIE_BURNED && !mDead);
 
@@ -3766,17 +3773,24 @@ void Zombie::DropFlag()
 	ReanimShowTrack("Zombie_innerarm_screendoor", RENDER_GROUP_HIDDEN);
 	mHasObject = false;
 
-	float aFlagPosX, aFlagPosY;
-	GetTrackPosition("Zombie_flaghand", aFlagPosX, aFlagPosY);
-	TodParticleSystem* aParticle = mApp->AddTodParticle(aFlagPosX + 6.0f - 16.75f, aFlagPosY - 45.0f - 18.025f, mRenderOrder + 1, ParticleEffect::PARTICLE_ZOMBIE_FLAG);
-	if (aParticle)
-	{
-		for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
-		{
-			TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
-			aEmitter->mSystemCenter.y += 63.025f;
-			aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
-		}
+    float aFlagPosX, aFlagPosY;
+    GetTrackPosition("Zombie_flaghand", aFlagPosX, aFlagPosY);
+    TodParticleSystem* aParticle = mApp->AddTodParticle(aFlagPosX + 6.0f - 16.75f, aFlagPosY - 45.0f - 18.025f, mRenderOrder + 1, ParticleEffect::PARTICLE_ZOMBIE_FLAG);
+    if (aParticle)
+    {
+        Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim)
+        {
+            aParticle->OverrideExtraAdditiveDraw(nullptr, aBodyReanim->mEnableExtraAdditiveDraw);
+            aParticle->OverrideExtraAdditiveColor(nullptr, aBodyReanim->mExtraAdditiveColor);
+        }
+
+        for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+        {
+            TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
+            aEmitter->mSystemCenter.y += 63.025f;
+            aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
+        }
 
 
 		if (GetBodyDamageIndex() == 2) {
@@ -3941,80 +3955,93 @@ void Zombie::DropHead(unsigned int theDamageFlags)
 			aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
 		}
 
-		Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
-		if (aBodyReanim)
-		{
-			aParticle->OverrideExtraAdditiveDraw(nullptr, aBodyReanim->mEnableExtraAdditiveDraw);
-			aParticle->OverrideExtraAdditiveColor(nullptr, aBodyReanim->mExtraAdditiveColor);
-		}
-
-		if (mZombieType == ZombieType::ZOMBIE_DANCER)
-		{
-			// @Patoke: added new assets
-			ReanimShowPrefix("Zombie_disco_chops", RENDER_GROUP_HIDDEN);
-			ReanimShowPrefix("Zombie_disco_glasses", RENDER_GROUP_HIDDEN);
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDANCERHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER)
-		{
-			// @Patoke: added new assets
-			ReanimShowPrefix("Zombie_disco_chops", RENDER_GROUP_HIDDEN);
-			ReanimShowPrefix("Zombie_backup_stash", RENDER_GROUP_HIDDEN);
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEBACKUPDANCERHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_BOBSLED)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEBOBSLEDHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_LADDER)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIELADDERHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_IMP)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEIMPHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_FOOTBALL || mZombieType == ZombieType::ZOMBIE_BLACK_FOOTBALL)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEFOOTBALLHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_POLEVAULTER)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEPOLEVAULTERHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_SNORKEL)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_SNORKLE_HEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_DIGGER)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDIGGERHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDOLPHINRIDERHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_YETI)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEYETIHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_BUNGEE)
-		{
-			ReanimShowPrefix("Zombie_bungi_hair", RENDER_GROUP_HIDDEN);
-			ReanimShowPrefix("anim_head1", RENDER_GROUP_HIDDEN);
-			ReanimShowPrefix("Zombie_bungi_tongue", RENDER_GROUP_HIDDEN);
-			ReanimShowPrefix("Zombie_bungi_jaw", RENDER_GROUP_HIDDEN);
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEBUNGEEHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX)
-		{
-			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEJACKBOXHEAD);
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_NEWSPAPER || mZombieType == ZombieType::ZOMBIE_SUNDAYPAPER)
-		{
-			aParticle->OverrideImage("Head", mZombiePhase == ZombiePhase::PHASE_NEWSPAPER_MAD ? IMAGE_ZOMBIENEWSPAPERMADHEAD : IMAGE_ZOMBIENEWSPAPERHEAD);
-		}
-	}
+        Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim)
+        {
+            bool aExtraAdditiveDraw = false;
+            Color aExtraAdditiveColor = Color::White;
+            if (mMindControlled)
+            {
+                aExtraAdditiveColor = ZOMBIE_MINDCONTROLLED_COLOR;
+                aExtraAdditiveDraw = true;
+            }
+            if (mChilledCounter > 0 || mIceTrapCounter > 0)
+            {
+                aExtraAdditiveColor = Color(75, 75, 255);
+                aExtraAdditiveDraw = true;
+            }
+            
+            aParticle->OverrideExtraAdditiveDraw(nullptr, aExtraAdditiveDraw);
+            aParticle->OverrideExtraAdditiveColor(nullptr, aExtraAdditiveColor);
+        }
+       
+        if (mZombieType == ZombieType::ZOMBIE_DANCER)
+        {
+            // @Patoke: added new assets
+            ReanimShowPrefix("Zombie_disco_chops", RENDER_GROUP_HIDDEN);
+            ReanimShowPrefix("Zombie_disco_glasses", RENDER_GROUP_HIDDEN);
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDANCERHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER)
+        {
+            // @Patoke: added new assets
+            ReanimShowPrefix("Zombie_disco_chops", RENDER_GROUP_HIDDEN);
+            ReanimShowPrefix("Zombie_backup_stash", RENDER_GROUP_HIDDEN);
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEBACKUPDANCERHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_BOBSLED)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEBOBSLEDHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_LADDER)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIELADDERHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_IMP)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEIMPHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_FOOTBALL || mZombieType == ZombieType::ZOMBIE_BLACK_FOOTBALL)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEFOOTBALLHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_POLEVAULTER)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEPOLEVAULTERHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_SNORKEL)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_SNORKLE_HEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_DIGGER)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDIGGERHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDOLPHINRIDERHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_YETI)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEYETIHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_BUNGEE)
+        {
+            ReanimShowPrefix("Zombie_bungi_hair", RENDER_GROUP_HIDDEN);
+            ReanimShowPrefix("anim_head1", RENDER_GROUP_HIDDEN);
+            ReanimShowPrefix("Zombie_bungi_tongue", RENDER_GROUP_HIDDEN);
+            ReanimShowPrefix("Zombie_bungi_jaw", RENDER_GROUP_HIDDEN);
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEBUNGEEHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX)
+        {
+            aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEJACKBOXHEAD);
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_NEWSPAPER || mZombieType == ZombieType::ZOMBIE_SUNDAYPAPER)
+        {
+            aParticle->OverrideImage("Head", mZombiePhase == ZombiePhase::PHASE_NEWSPAPER_MAD ? IMAGE_ZOMBIENEWSPAPERMADHEAD : IMAGE_ZOMBIENEWSPAPERHEAD);
+        }
+    }
 
 	Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
 	if (mBoard->mMustacheMode && aBodyReanim->TrackExists("Zombie_mustache"))
@@ -4235,57 +4262,76 @@ void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags)
 				aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
 			}
 
-			switch (mZombieType)
-			{
-			case ZombieType::ZOMBIE_SNORKEL:
-				aParticle->OverrideImage(nullptr, IMAGE_ZOMBIESNORKLEARM);
-				break;
-			case ZombieType::ZOMBIE_FOOTBALL:
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_HAND);
-				break;
-			case ZombieType::ZOMBIE_NEWSPAPER:
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_LOWER);
-				break;
-				// @Patoke: add cases
-			case ZombieType::ZOMBIE_DANCER:
-				ReanimShowTrack("Zombie_disco_outerarm_lower", RENDER_GROUP_HIDDEN);
-				ReanimShowTrack("Zombie_disco_outerhand_point", RENDER_GROUP_HIDDEN);
-				ReanimShowTrack("Zombie_disco_outerhand", RENDER_GROUP_HIDDEN);
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_DISCO_OUTERARM_HAND);
-				break;
-			case ZombieType::ZOMBIE_BACKUP_DANCER:
-				ReanimShowTrack("Zombie_disco_outerarm_lower", RENDER_GROUP_HIDDEN);
-				ReanimShowTrack("Zombie_disco_outerhand", RENDER_GROUP_HIDDEN);
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_BACKUP_INNERARM_HAND);
-				break;
-			case ZombieType::ZOMBIE_BOBSLED:
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_BOBSLED_OUTERARM_HAND);
-				break;
-			case ZombieType::ZOMBIE_IMP:
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMP_ARM2);
-				break;
-			case ZombieType::ZOMBIE_YETI:
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_YETI_OUTERARM_HAND);
-				break;
-			case ZombieType::ZOMBIE_JACK_IN_THE_BOX:
-				aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEJACKBOXARM);
-				break;
-			case ZombieType::ZOMBIE_DIGGER:
-				aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDIGGERARM);
-				break;
-			case ZombieType::ZOMBIE_POLEVAULTER:
-			case ZombieType::ZOMBIE_BALLOON:
-			case ZombieType::ZOMBIE_DOLPHIN_RIDER:
-			case ZombieType::ZOMBIE_POGO:
-			case ZombieType::ZOMBIE_LADDER:
-				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_OUTERARM_HAND);
-				break;
+            if (aBodyReanim)
+            {
+                bool aExtraAdditiveDraw = false;
+                Color aExtraAdditiveColor = Color::White;
+                if (mMindControlled)
+                {
+                    aExtraAdditiveColor = ZOMBIE_MINDCONTROLLED_COLOR;
+                    aExtraAdditiveDraw = true;
+                }
+                if (mChilledCounter > 0 || mIceTrapCounter > 0)
+                {
+                    aExtraAdditiveColor = Color(75, 75, 255);
+                    aExtraAdditiveDraw = true;
+                }
+
+                aParticle->OverrideExtraAdditiveDraw(nullptr, aExtraAdditiveDraw);
+                aParticle->OverrideExtraAdditiveColor(nullptr, aExtraAdditiveColor);
+            }
+
+            switch (mZombieType)
+            {
+            case ZombieType::ZOMBIE_SNORKEL:
+                aParticle->OverrideImage(nullptr, IMAGE_ZOMBIESNORKLEARM);
+                break;
+            case ZombieType::ZOMBIE_FOOTBALL:
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_HAND);
+                break;
+            case ZombieType::ZOMBIE_NEWSPAPER:
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_LOWER);
+                break;
+                // @Patoke: add cases
+            case ZombieType::ZOMBIE_DANCER:
+                ReanimShowTrack("Zombie_disco_outerarm_lower", RENDER_GROUP_HIDDEN);
+                ReanimShowTrack("Zombie_disco_outerhand_point", RENDER_GROUP_HIDDEN);
+                ReanimShowTrack("Zombie_disco_outerhand", RENDER_GROUP_HIDDEN);
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_DISCO_OUTERARM_HAND);
+                break;
+            case ZombieType::ZOMBIE_BACKUP_DANCER:
+                ReanimShowTrack("Zombie_disco_outerarm_lower", RENDER_GROUP_HIDDEN);
+                ReanimShowTrack("Zombie_disco_outerhand", RENDER_GROUP_HIDDEN);
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_BACKUP_INNERARM_HAND);
+                break;
+            case ZombieType::ZOMBIE_BOBSLED:
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_BOBSLED_OUTERARM_HAND);
+                break;
+            case ZombieType::ZOMBIE_IMP:
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMP_ARM2);
+                break;
+            case ZombieType::ZOMBIE_YETI:
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_YETI_OUTERARM_HAND);
+                break;
+            case ZombieType::ZOMBIE_JACK_IN_THE_BOX:
+                aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEJACKBOXARM);
+                break;
+            case ZombieType::ZOMBIE_DIGGER:
+                aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEDIGGERARM);
+                break;
+            case ZombieType::ZOMBIE_POLEVAULTER:
+            case ZombieType::ZOMBIE_BALLOON:
+            case ZombieType::ZOMBIE_DOLPHIN_RIDER:
+            case ZombieType::ZOMBIE_POGO:
+            case ZombieType::ZOMBIE_LADDER:
+                aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_OUTERARM_HAND);
+                break;
 			case ZombieType::ZOMBIE_SUNDAYPAPER:
 				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_SUNDAYPAPER_LEFTARM_LOWER);
 				break;
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
 //0x529EF0
@@ -8628,7 +8674,7 @@ void Zombie::DropShield(unsigned int theDamageFlags)
 	//ZombieDrawPosition aDrawPos;
 	//GetDrawPos(aDrawPos);
 
-	TodParticleSystem* aParticle;
+    TodParticleSystem* aParticle = NULL;
 
 	int aShieldDamageIndex = GetShieldDamageIndex();
 	if (mShieldType == ShieldType::SHIELDTYPE_DOOR)
@@ -8782,17 +8828,37 @@ void Zombie::DropShield(unsigned int theDamageFlags)
 		}
 	}
 
-	if (!TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_DOESNT_LEAVE_BODY))
-	{
-		if (aParticle)
-		{
-			for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
-			{
-				TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
-				aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
-			}
-		}
-	}
+    if (!TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_DOESNT_LEAVE_BODY))
+    {
+        if (aParticle)
+        {
+            Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+            if (aBodyReanim)
+            {
+                bool aExtraAdditiveDraw = false;
+                Color aExtraAdditiveColor = Color::White;
+                if (mMindControlled)
+                {
+                    aExtraAdditiveColor = ZOMBIE_MINDCONTROLLED_COLOR;
+                    aExtraAdditiveDraw = true;
+                }
+                if (mChilledCounter > 0 || mIceTrapCounter > 0)
+                {
+                    aExtraAdditiveColor = Color(75, 75, 255);
+                    aExtraAdditiveDraw = true;
+                }
+
+                aParticle->OverrideExtraAdditiveDraw(nullptr, aExtraAdditiveDraw);
+                aParticle->OverrideExtraAdditiveColor(nullptr, aExtraAdditiveColor);
+            }
+
+            for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+            {
+                TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
+                aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
+            }
+        }
+    }
 
 	mShieldType = ShieldType::SHIELDTYPE_NONE;
 }
@@ -8944,14 +9010,34 @@ void Zombie::DropHelm(unsigned int theDamageFlags)
 		OverrideParticleColor(aParticle);
 		OverrideParticleScale(aParticle);
 
-		if (aParticle)
-		{
-			for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
-			{
-				TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
-				aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
-			}
-		}
+        if (aParticle)
+        {
+            Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+            if (aBodyReanim)
+            {
+                bool aExtraAdditiveDraw = false;
+                Color aExtraAdditiveColor = Color::White;
+                if (mMindControlled)
+                {
+                    aExtraAdditiveColor = ZOMBIE_MINDCONTROLLED_COLOR;
+                    aExtraAdditiveDraw = true;
+                }
+                if (mChilledCounter > 0 || mIceTrapCounter > 0)
+                {
+                    aExtraAdditiveColor = Color(75, 75, 255);
+                    aExtraAdditiveDraw = true;
+                }
+
+                aParticle->OverrideExtraAdditiveDraw(nullptr, aExtraAdditiveDraw);
+                aParticle->OverrideExtraAdditiveColor(nullptr, aExtraAdditiveColor);
+            }
+
+            for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+            {
+                TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
+                aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
+            }
+        }
 
 		if (mHelmType == HelmType::HELMTYPE_TRAFFIC_CONE)
 		{
@@ -10135,37 +10221,37 @@ void Zombie::ApplyBurn()
 		DropDiggerAxe();
 	}
 
-	if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_DYING ||
-		mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT ||
-		mZombiePhase == ZombiePhase::PHASE_IMP_GETTING_THROWN ||
-		mZombiePhase == ZombiePhase::PHASE_RISING_FROM_GRAVE ||
-		mZombiePhase == ZombiePhase::PHASE_DANCER_RISING ||
-		mZombiePhase == ZombiePhase::PHASE_DOLPHIN_INTO_POOL ||
-		mZombiePhase == ZombiePhase::PHASE_DOLPHIN_IN_JUMP ||
-		mZombiePhase == ZombiePhase::PHASE_DOLPHIN_RIDING ||
-		mZombiePhase == ZombiePhase::PHASE_SNORKEL_INTO_POOL ||
-		mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING ||
-		mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING_PAUSE_WITHOUT_AXE ||
-		mZombiePhase == ZombiePhase::PHASE_DIGGER_RISING ||
-		mZombiePhase == ZombiePhase::PHASE_DIGGER_RISE_WITHOUT_AXE ||
-		mZombiePhase == ZombiePhase::PHASE_ZOMBIE_MOWERED ||
-		mInPool && mAltitude <= -40 * mScaleZombie ||
-		mYampolineCounter > 0)
-	{
-		DieWithLoot();
-		/*TakeFlyingDamage(mFlyingHealth, 0U);
-		TakeShieldDamage(mShieldHealth, 0U);
-		TakeHelmDamage(mHelmHealth, 0U);
-		TakeBodyDamage(mBodyHealth, 0U);*/
-	}
-	else if (mZombieType == ZOMBIE_BUNGEE || mZombieType == ZOMBIE_YETI || Zombie::IsZombotany(mZombieType) || IsBobsledTeamWithSled() || IsFlying() || !mHasHead || mZombieType == ZombieType::ZOMBIE_DOG)
-	{
-		SetAnimRate(0.0f);
-		Reanimation* aHeadReanim = mApp->ReanimationTryToGet(mSpecialHeadReanimID);
-		if (aHeadReanim)
-		{
-			aHeadReanim->mAnimRate = 0.0f;
-		}
+    if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_DYING || 
+        mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT || 
+        mZombiePhase == ZombiePhase::PHASE_IMP_GETTING_THROWN || 
+        mZombiePhase == ZombiePhase::PHASE_RISING_FROM_GRAVE || 
+        mZombiePhase == ZombiePhase::PHASE_DANCER_RISING || 
+        mZombiePhase == ZombiePhase::PHASE_DOLPHIN_INTO_POOL || 
+        mZombiePhase == ZombiePhase::PHASE_DOLPHIN_IN_JUMP || 
+        mZombiePhase == ZombiePhase::PHASE_DOLPHIN_RIDING || 
+        mZombiePhase == ZombiePhase::PHASE_SNORKEL_INTO_POOL || 
+        mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING || 
+        mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING_PAUSE_WITHOUT_AXE || 
+        mZombiePhase == ZombiePhase::PHASE_DIGGER_RISING || 
+        mZombiePhase == ZombiePhase::PHASE_DIGGER_RISE_WITHOUT_AXE || 
+        mZombiePhase == ZombiePhase::PHASE_ZOMBIE_MOWERED || 
+        mInPool || 
+        mYampolineCounter > 0)
+    {
+        DieWithLoot();
+        /*TakeFlyingDamage(mFlyingHealth, 0U);
+        TakeShieldDamage(mShieldHealth, 0U);
+        TakeHelmDamage(mHelmHealth, 0U);
+        TakeBodyDamage(mBodyHealth, 0U);*/
+    }
+    else if (mZombieType == ZOMBIE_BUNGEE || mZombieType == ZOMBIE_YETI || Zombie::IsZombotany(mZombieType) || IsBobsledTeamWithSled() || IsFlying() || !mHasHead || mZombieType == ZombieType::ZOMBIE_DOG)
+    {
+        SetAnimRate(0.0f);
+        Reanimation* aHeadReanim = mApp->ReanimationTryToGet(mSpecialHeadReanimID);
+        if (aHeadReanim)
+        {
+            aHeadReanim->mAnimRate = 0.0f;
+        }
 
 		mZombiePhase = ZombiePhase::PHASE_ZOMBIE_BURNED;
 		mPhaseCounter = 300;
@@ -12443,16 +12529,36 @@ void Zombie::DropZombiePole()
 		aPosY -= 40;
 	}
 
-	TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_HEAD);
-	if (aParticle)
-	{
-		for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
-		{
-			TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
-			aEmitter->mSystemCenter.y += 40;
-			aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
-		}
+    TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_HEAD);
+    if (aParticle)
+    {
+        Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim)
+        {
+            bool aExtraAdditiveDraw = false;
+            Color aExtraAdditiveColor = Color::White;
+            if (mMindControlled)
+            {
+                aExtraAdditiveColor = ZOMBIE_MINDCONTROLLED_COLOR;
+                aExtraAdditiveDraw = true;
+            }
+            if (mChilledCounter > 0 || mIceTrapCounter > 0)
+            {
+                aExtraAdditiveColor = Color(75, 75, 255);
+                aExtraAdditiveDraw = true;
+            }
 
+            aParticle->OverrideExtraAdditiveDraw(nullptr, aExtraAdditiveDraw);
+            aParticle->OverrideExtraAdditiveColor(nullptr, aExtraAdditiveColor);
+        }
+
+        for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+        {
+            TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
+            aEmitter->mSystemCenter.y += 40;
+            aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
+        }
+        
 
 		OverrideParticleColor(aParticle);
 		OverrideParticleScale(aParticle);
@@ -12490,10 +12596,29 @@ void Zombie::DropBalloonPropeller()
 		GetTrackPosition("anim_head1", aPosX, aPosY);
 	}
 
-	TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_BALLOON_HEAD);
-	OverrideParticleColor(aParticle);
-	OverrideParticleScale(aParticle);
-	aParticle->OverrideImage("Head", IMAGE_BLANK);
+    TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_BALLOON_HEAD);
+    OverrideParticleColor(aParticle);
+    OverrideParticleScale(aParticle);
+    Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+    if (aBodyReanim && aParticle)
+    {
+        bool aExtraAdditiveDraw = false;
+        Color aExtraAdditiveColor = Color::White;
+        if (mMindControlled)
+        {
+            aExtraAdditiveColor = ZOMBIE_MINDCONTROLLED_COLOR;
+            aExtraAdditiveDraw = true;
+        }
+        if (mChilledCounter > 0 || mIceTrapCounter > 0)
+        {
+            aExtraAdditiveColor = Color(75, 75, 255);
+            aExtraAdditiveDraw = true;
+        }
+
+        aParticle->OverrideExtraAdditiveDraw(nullptr, aExtraAdditiveDraw);
+        aParticle->OverrideExtraAdditiveColor(nullptr, aExtraAdditiveColor);
+    }
+    aParticle->OverrideImage("Head", IMAGE_BLANK);
 }
 
 void Zombie::DropPogoGlasses()
@@ -12558,14 +12683,21 @@ void Zombie::DropJackInTheBox()
 		GetTrackPosition("Zombie_jackbox_box", aPosX, aPosY);
 	}
 
-	TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_HEAD);
-	if (aParticle)
-	{
-		for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
-		{
-			TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
-			aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
-		}
+    TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_HEAD);
+    if (aParticle)
+    {
+        Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim)
+        {
+            aParticle->OverrideExtraAdditiveDraw(nullptr, aBodyReanim->mEnableExtraAdditiveDraw);
+            aParticle->OverrideExtraAdditiveColor(nullptr, aBodyReanim->mExtraAdditiveColor);
+        }
+
+        for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+        {
+            TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
+            aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
+        }
 
 		OverrideParticleColor(aParticle);
 		OverrideParticleScale(aParticle);
@@ -12585,14 +12717,21 @@ void Zombie::DropDiggerAxe()
 		GetTrackPosition("Zombie_digger_pickaxe", aPosX, aPosY);
 	}
 
-	TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_HEAD);
-	if (aParticle)
-	{
-		for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
-		{
-			TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
-			aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
-		}
+    TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, PARTICLE_ZOMBIE_HEAD);
+    if (aParticle)
+    {
+        Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim)
+        {
+            aParticle->OverrideExtraAdditiveDraw(nullptr, aBodyReanim->mEnableExtraAdditiveDraw);
+            aParticle->OverrideExtraAdditiveColor(nullptr, aBodyReanim->mExtraAdditiveColor);
+        }
+
+        for (TodListNode<ParticleEmitterID>* aNode = aParticle->mEmitterList.mHead; aNode != nullptr; aNode = aNode->mNext)
+        {
+            TodParticleEmitter* aEmitter = aParticle->mParticleHolder->mEmitters.DataArrayGet((unsigned int)aNode->mValue);
+            aEmitter->mSystemCenter.y -= 80 * (1 - mScaleZombie);
+        }
 
 		OverrideParticleColor(aParticle);
 		OverrideParticleScale(aParticle);
