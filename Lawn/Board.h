@@ -188,6 +188,7 @@ public:
 	int								mBoardRandSeed;											//+0x561C
 	ParticleSystemID				mPoolSparklyParticleID;									//+0x5620
 	ReanimationID					mFwooshID[MAX_GRID_SIZE_Y][12];							//+0x5624
+	int								mFwooshCounterID[MAX_GRID_SIZE_Y];
 	int								mFwooshCountDown;										//+0x5744
 	int								mTimeStopCounter;										//+0x5748
 	bool							mDroppedFirstCoin;										//+0x574C
@@ -500,7 +501,7 @@ public:
 	static /*inline*/ bool			IsZombieTypeSpawnedOnly(ZombieType theZombieType);
 
 	int								NukeBoard();
-	int								RawKillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags);
+	int								GetKilledlZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags);
 
 	void							MovePlant(Plant* thePlant, int theGridX, int theGridY);
 

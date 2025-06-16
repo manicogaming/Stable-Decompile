@@ -1528,65 +1528,48 @@ void Zombie::UpdateZombieBungee()
 			mApp->PlayFoley(FoleyType::FOLEY_GRASSSTEP);  // 靶子扎地的音效
 		}
 
-		BungeeLanding();
-	}
-	else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_AT_BOTTOM)
-	{
-		if (mPhaseCounter == 58)
-		{
-			Plant* aPlant = mBoard->GetTopPlantAt(mTargetCol, mRow, PlantPriority::TOPPLANT_BUNGEE_ORDER);
-			if (aPlant && !aPlant->NotOnGround())
-			{
-				Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
-				if (aBodyReanim)
-					aBodyReanim->PlayReanim("anim_grab", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
-
-				//PlayZombieReanim("anim_grab", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
-				mTargetPlantID = (PlantID)mBoard->mPlants.DataArrayGetID(aPlant);
-				//aPlant->mOnBungeeState = PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE;
-				mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, mRow, 0);
-			}
-		}
-
-		if (mPhaseCounter <= 0)
-		{
-			BungeeStealTarget();
-			mZombiePhase = ZombiePhase::PHASE_BUNGEE_GRABBING;
-		}
-	}
-	else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_GRABBING)
-	{
-		Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-		if (/*aBodyReanim->mLoopCount > 0 || */mPhaseCounter <= 0)
-		{
-			BungeeLiftTarget();
-			mZombiePhase = ZombiePhase::PHASE_BUNGEE_RISING;
-		}
-	}
-	else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_HIT_OUCHY)
-	{
-		if (mPhaseCounter <= 0)
-		{
-			DieWithLoot();
-		}
-	}
-	else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_RISING)
-	{
-		mAltitude += 8.0f;
-		Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-		if (mAltitude >= 600.0f)
-		{
-			DieNoLoot();
-		}
-	}
-	else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_CUTSCENE)
-	{
-		mAltitude = TodAnimateCurve(200, 0, mPhaseCounter, 40, 0, TodCurves::CURVE_SIN_WAVE);
-		if (mPhaseCounter <= 0)
-		{
-			mPhaseCounter = 200;
-		}
-	}
+        BungeeLanding();
+    }
+    else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_AT_BOTTOM)
+    {
+        if (mPhaseCounter <= 0)
+        {
+            BungeeStealTarget();
+            mZombiePhase = ZombiePhase::PHASE_BUNGEE_GRABBING;
+        }
+    }
+    else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_GRABBING)
+    {
+        Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        if (aBodyReanim->mLoopCount > 0)
+        {
+            BungeeLiftTarget();
+            mZombiePhase = ZombiePhase::PHASE_BUNGEE_RISING;
+        }
+    }
+    else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_HIT_OUCHY)
+    {
+        if (mPhaseCounter <= 0)
+        {
+            DieWithLoot();
+        }
+    }
+    else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_RISING)
+    {
+        mAltitude += 8.0f;
+        if (mAltitude >= 600.0f)
+        {
+            DieNoLoot();
+        }
+    }
+    else if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_CUTSCENE)
+    {
+        mAltitude = TodAnimateCurve(200, 0, mPhaseCounter, 40, 0, TodCurves::CURVE_SIN_WAVE);
+        if (mPhaseCounter <= 0)
+        {
+            mPhaseCounter = 200;
+        }
+    }
 
 	mX = (int)mPosX;
 	mY = (int)mPosY;
@@ -3831,17 +3814,17 @@ void Zombie::DropPole()
 
 bool Zombie::CanLoseBodyParts()
 {
-	return
-		mZombieType != ZombieType::ZOMBIE_ZAMBONI &&
-		/*mZombieType != ZombieType::ZOMBIE_BUNGEE &&*/
-		mZombieType != ZombieType::ZOMBIE_CATAPULT &&
-		mZombieType != ZombieType::ZOMBIE_GARGANTUAR &&
-		mZombieType != ZombieType::ZOMBIE_REDEYE_GARGANTUAR &&
-		mZombieType != ZombieType::ZOMBIE_BOSS &&
-		mZombieHeight != ZombieHeight::HEIGHT_ZOMBIQUARIUM &&
-		!IsFlying() &&
-		!IsBobsledTeamWithSled() &&
-		mZombieType != ZombieType::ZOMBIE_DOG;
+    return 
+        mZombieType != ZombieType::ZOMBIE_ZAMBONI && 
+        mZombieType != ZombieType::ZOMBIE_BUNGEE &&
+        mZombieType != ZombieType::ZOMBIE_CATAPULT && 
+        mZombieType != ZombieType::ZOMBIE_GARGANTUAR && 
+        mZombieType != ZombieType::ZOMBIE_REDEYE_GARGANTUAR && 
+        mZombieType != ZombieType::ZOMBIE_BOSS && 
+        mZombieHeight != ZombieHeight::HEIGHT_ZOMBIQUARIUM && 
+        !IsFlying() && 
+        !IsBobsledTeamWithSled() &&
+        mZombieType != ZombieType::ZOMBIE_DOG;
 }
 
 void Zombie::SetupReanimForLostHead()
@@ -10263,78 +10246,83 @@ void Zombie::ApplyBurn()
 			BalloonPropellerHatSpin(false);
 		}
 
-		if (mZombieType == ZOMBIE_POLEVAULTER)
-		{
-			if (mZombiePhase == PHASE_POLEVAULTER_PRE_VAULT || mZombiePhase == PHASE_POLEVAULTER_IN_VAULT)
-				DropZombiePole();
-			DropPole();
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX)
-		{
-			DropJackInTheBox();
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_DIGGER)
-		{
-			DiggerLoseAxe();
-			DropDiggerAxe();
-		}
-	}
-	else
-	{
-		ReanimationType aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED;
-		float aCharredPosX = mPosX + 22.0f;
-		float aCharredPosY = mPosY - 10.0f;
-		if (mZombieType == ZombieType::ZOMBIE_BALLOON)
-		{
-			aCharredPosY += 31.0f;
-		}
-		if (mZombieType == ZombieType::ZOMBIE_IMP)
-		{
-			aCharredPosX -= 6.0f;
-			aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_IMP;
-		}
-		if (mZombieType == ZombieType::ZOMBIE_DIGGER)
-		{
-			if (IsWalkingBackwards())
-			{
-				aCharredPosX += 14.0f;
-			}
-			aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_DIGGER;
-		}
-		if (mZombieType == ZombieType::ZOMBIE_ZAMBONI)
-		{
-			aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_ZAMBONI;
-			aCharredPosX += 61.0f;
-			aCharredPosY -= 16.0f;
-		}
-		if (mZombieType == ZombieType::ZOMBIE_CATAPULT)
-		{
-			aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_CATAPULT;
-			aCharredPosX -= 36.0f;
-			aCharredPosY -= 20.0f;
-		}
-		if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR)
-		{
-			aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_GARGANTUAR;
-			aCharredPosX -= 15.0f;
-			aCharredPosY -= 10.0f;
-		}
+        /*if (mZombieType == ZOMBIE_POLEVAULTER)
+        {
+            if (mZombiePhase == PHASE_POLEVAULTER_PRE_VAULT || mZombiePhase == PHASE_POLEVAULTER_IN_VAULT)                
+                DropZombiePole();
+            DropPole();
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX)
+        {
+            DropJackInTheBox();
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_DIGGER)
+        {
+            DiggerLoseAxe();
+            DropDiggerAxe();
+        }*/
+    }
+    else
+    {
+        ReanimationType aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED;
+        float aCharredPosX = mPosX + 22.0f;
+        float aCharredPosY = mPosY - 10.0f;
+        if (mZombieType == ZombieType::ZOMBIE_BALLOON)
+        {
+            aCharredPosY += 31.0f;
+        }
+        if (mZombieType == ZombieType::ZOMBIE_IMP)
+        {
+            aCharredPosX -= 6.0f;
+            aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_IMP;
+        }
+        if (mZombieType == ZombieType::ZOMBIE_DIGGER)
+        {
+            if (IsWalkingBackwards())
+            {
+                aCharredPosX += 14.0f;
+            }
+            aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_DIGGER;
+        }
+        if (mZombieType == ZombieType::ZOMBIE_ZAMBONI)
+        {
+            aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_ZAMBONI;
+            aCharredPosX += 61.0f;
+            aCharredPosY -= 16.0f;
+        }
+        if (mZombieType == ZombieType::ZOMBIE_CATAPULT)
+        {
+            aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_CATAPULT;
+            aCharredPosX -= 36.0f;
+            aCharredPosY -= 20.0f;
+        }
+        if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR)
+        {
+            aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_GARGANTUAR;
+            aCharredPosX -= 15.0f;
+            aCharredPosY -= 10.0f;
+        }
 
-		Reanimation* aCharredReanim = mApp->AddReanimation(aCharredPosX, aCharredPosY, mRenderOrder, aReanimType);
-		aCharredReanim->mAnimRate *= RandRangeFloat(0.9f, 1.1f);
-		if (mZombiePhase == ZombiePhase::PHASE_DIGGER_WALKING_WITHOUT_AXE)
-		{
-			aCharredReanim->SetFramesForLayer("anim_crumble_noaxe");
-		}
-		else if (mZombieType == ZombieType::ZOMBIE_DIGGER)
-		{
-			aCharredReanim->SetFramesForLayer("anim_crumble");
-		}
-		else if ((mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) && !mHasObject)
-		{
-			aCharredReanim->SetImageOverride("impblink", IMAGE_BLANK);
-			aCharredReanim->SetImageOverride("imphead", IMAGE_BLANK);
-		}
+        if (mOnHighGround)
+        {
+            aCharredPosY -= HIGH_GROUND_HEIGHT;
+        }
+
+        Reanimation* aCharredReanim = mApp->AddReanimation(aCharredPosX, aCharredPosY, mRenderOrder, aReanimType);
+        aCharredReanim->mAnimRate *= RandRangeFloat(0.9f, 1.1f);
+        if (mZombiePhase == ZombiePhase::PHASE_DIGGER_WALKING_WITHOUT_AXE)
+        {
+            aCharredReanim->SetFramesForLayer("anim_crumble_noaxe");
+        }
+        else if (mZombieType == ZombieType::ZOMBIE_DIGGER)
+        {
+            aCharredReanim->SetFramesForLayer("anim_crumble");
+        }
+        else if ((mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) && !mHasObject)
+        {
+            aCharredReanim->SetImageOverride("impblink", IMAGE_BLANK);
+            aCharredReanim->SetImageOverride("imphead", IMAGE_BLANK);
+        }
 
 		float aScaleZombie = mScaleZombie;
 
@@ -12667,11 +12655,11 @@ void Zombie::DropPropeller(unsigned int theDamageFlags)
 
 void Zombie::DropJackInTheBox()
 {
-	StopZombieSound();
-	PickRandomSpeed();
-	mZombiePhase = ZombiePhase::PHASE_ZOMBIE_NORMAL;
-	ReanimShowPrefix("Zombie_jackbox_box", RENDER_GROUP_HIDDEN);
-	ReanimShowPrefix("Zombie_jackbox_handle", RENDER_GROUP_HIDDEN);
+    StopZombieSound();
+    PickRandomSpeed();
+    //mZombiePhase = ZombiePhase::PHASE_ZOMBIE_NORMAL;
+    ReanimShowPrefix("Zombie_jackbox_box", RENDER_GROUP_HIDDEN);
+    ReanimShowPrefix("Zombie_jackbox_handle", RENDER_GROUP_HIDDEN);
 
 	int aRenderOrder = mRenderOrder + 1;
 	ZombieDrawPosition aDrawPos;

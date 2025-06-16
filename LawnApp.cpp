@@ -1827,7 +1827,7 @@ void LawnApp::UpdateFrames()
 		}
 
 		SexyApp::UpdateFrames();
-		if (mMusic)
+		if (mMusic && mMusic->mMusicInterface)
 			mMusic->MusicUpdate();
 		if (mLoadingThreadCompleted && mEffectSystem)
 		{
@@ -1910,7 +1910,6 @@ void LawnApp::LoadingThreadProc()
 
 	LoadGroup("LoadingFonts", 54);
 	LoadGroup("LoadingImages", 9);
-	LoadGroup("LoadingSounds", 54);
 
 	if (mLoadingFailed || mShutdown || mCloseRequest)
 		return;
@@ -1951,6 +1950,7 @@ void LawnApp::LoadingThreadProc()
 	aTimer.Start();
 
 	//GetNumPreloadingTasks();
+	LoadGroup("LoadingSounds", 54);
 	TodHesitationTrace("finished loading");
 }
 
