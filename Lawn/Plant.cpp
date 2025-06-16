@@ -2137,7 +2137,7 @@ void Plant::UpdateChomper()
                         aZombie->DropZombiePole();
                     aZombie->DropPole();          
                 }
-                else if (aZombie->mZombieType == ZOMBIE_NEWSPAPER)
+                else if (aZombie->mZombieType == ZOMBIE_NEWSPAPER || aZombie->mZombieType == ZOMBIE_SUNDAYPAPER)
                 {
                     aZombie->DropNewsPaperGlasses();
                 }

@@ -9447,8 +9447,8 @@ void Board::KeyChar(SexyChar theChar)
 	}
 	if (theChar == _S('w'))
 	{
-		AddZombie(ZombieType::ZOMBIE_CONE_TRASHCAN, Zombie::ZOMBIE_WAVE_DEBUG);
-		AddZombie(ZombieType::ZOMBIE_PAIL_TRASHCAN, Zombie::ZOMBIE_WAVE_DEBUG);
+		AddZombie(ZombieType::ZOMBIE_SUNDAYPAPER, Zombie::ZOMBIE_WAVE_DEBUG);
+		AddZombie(ZombieType::ZOMBIE_BRICK, Zombie::ZOMBIE_WAVE_DEBUG);
 		return;
 	}
 	if (theChar == _S('F'))

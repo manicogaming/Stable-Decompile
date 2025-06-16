@@ -519,6 +519,14 @@
 <Image id="PEASHOOTER_HEAD_POWERED" path="PeaShooter_head_powered" />
 <Image id="PEASHOOTER_MOUTH_POWERED" path="PeaShooter_mouth_powered" />
 <Image id="PEASHOOTER_SPROUT_POWERED" path="PeaShooter_sprout_powered" />
+<Image id="ZOMBIE_SUNDAYPAPER_LEFTARM_UPPER2" path="Zombie_sundaypaper_leftarm_upper2" />
+<Image id="ZOMBIE_SUNDAYPAPER_LEFTARM_LOWER" path="Zombie_sundaypaper_leftarm_lower" />
+<Image id="ZOMBIE_SUNDAYPAPER_PAPER1" path="Zombie_sundaypaper_paper1" />
+<Image id="ZOMBIE_SUNDAYPAPER_PAPER2" path="Zombie_sundaypaper_paper2" />
+<Image id="ZOMBIE_SUNDAYPAPER_PAPER3" path="Zombie_sundaypaper_paper3" />
+<Image id="ZOMBIE_BRICK1" path="Zombie_brick1" />
+<Image id="ZOMBIE_BRICK2" path="Zombie_brick2" />
+<Image id="ZOMBIE_BRICK3" path="Zombie_brick3" />
 </Resources>
 
 <Resources id="LoadingSounds">

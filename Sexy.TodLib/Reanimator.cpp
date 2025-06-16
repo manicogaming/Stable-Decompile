@@ -167,6 +167,8 @@ ReanimationParams gLawnReanimationArray[(int)ReanimationType::NUM_REANIMS] = { /
 	{ ReanimationType::REANIM_ZOMBIE_BLACKFOOTBALL,                 "reanim\\Zombie_blackfootball.reanim",             0 },
 	{ ReanimationType::REANIM_SELECTORSCREEN_SPOTLIGHT,             "reanim\\SelectorScreen_spotlight.reanim",         3 },
 	{ ReanimationType::REANIM_HEATWAVE_SHOOTER,						"reanim\\HeatWaveShooter.reanim",				   0 },
+	{ ReanimationType::REANIM_ZOMBIE_SUNDAYPAPER,                   "reanim\\Zombie_sundaypaper.reanim",               0 },
+	{ ReanimationType::REANIM_BRICK,								"reanim\\Brickhead.reanim",							0 },
 
 };
 

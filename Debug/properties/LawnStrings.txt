@@ -1241,10 +1241,22 @@ Trashcan Conehead Zombie
 Trashcan Conehead Zombie description
 
 [TRASHCAN_PAIL_ZOMBIE]
-Trashcan BucketheadZombie
+Trashcan Buckethead Zombie
 
 [TRASHCAN_PAIL_ZOMBIE_DESCRIPTION]
 Trashcan Buckethead Zombie description
+
+[SUNDAYPAPER_ZOMBIE]
+Sunday Edition Newspaper Zombie
+
+[SUNDAYPAPER_ZOMBIE_DESCRIPTION]
+Sunday Edition Newspaper Zombie description
+
+[BRICKHEAD_ZOMBIE]
+Brickhead Zombie
+
+[BRICKHEAD_ZOMBIE_DESCRIPTION]
+Brickhead Zombie description
 
 [CRAZY_DAVE_201]
 Evening, {PLAYER_NAME}.

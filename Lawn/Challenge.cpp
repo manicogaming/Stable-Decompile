@@ -477,7 +477,7 @@ void Challenge::StartLevel()
 			_S("[ADVICE_SURVIVE_ENDLESS]");
 		mBoard->DisplayAdvice(aMessage, MESSAGE_STYLE_HINT_FAST, ADVICE_SURVIVE_FLAGS);
 	}
-	if (mApp->IsLastStand() && mApp->mSurvivalStage == 0)
+	if (mApp->IsLastStand() && mSurvivalStage == 0)
 	{
 		mBoard->DisplayAdvice(TodReplaceNumberString(_S("[ADVICE_SURVIVE_FLAGS]"), _S("{FLAGS}"), LAST_STAND_FLAGS), MESSAGE_STYLE_BIG_MIDDLE_FAST, ADVICE_SURVIVE_FLAGS);
 	}

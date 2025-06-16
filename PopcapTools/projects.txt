@@ -1,0 +1,5 @@
+EndlessPlus
+C:\Users\manico\Desktop\Stable Decompile\Debug\properties\resources.xml
+C:\Users\manico\Desktop\Stable Decompile\Resources
+
+
