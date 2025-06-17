@@ -3211,15 +3211,15 @@ void Zombie::SummonBackupDancers()
 //0x528A50
 bool Zombie::NeedsMoreBackupDancers()
 {
-	for (int i = 0; i < NUM_BACKUP_DANCERS; i++)
-	{
-		Zombie* aZombie = mBoard->ZombieTryToGet(mFollowerZombieID[i]);
-		if (aZombie == nullptr || aZombie && aZombie->IsDeadOrDying())
-		{
-			if (i == 0 && !mBoard->RowCanHaveZombieType(mRow - 1, ZombieType::ZOMBIE_BACKUP_DANCER, mFromWave))
-			{
-				continue;
-			}
+    for (int i = 0; i < NUM_BACKUP_DANCERS; i++)
+    {
+        Zombie* aZombie = mBoard->ZombieTryToGet(mFollowerZombieID[i]);
+        if (aZombie == nullptr)
+        {
+            if (i == 0 && !mBoard->RowCanHaveZombieType(mRow - 1, ZombieType::ZOMBIE_BACKUP_DANCER, mFromWave))
+            {
+                continue;
+            }
 
 			if (i == 1 && !mBoard->RowCanHaveZombieType(mRow + 1, ZombieType::ZOMBIE_BACKUP_DANCER, mFromWave))
 			{
