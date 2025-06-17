@@ -527,6 +527,8 @@
 <Image id="ZOMBIE_BRICK1" path="Zombie_brick1" />
 <Image id="ZOMBIE_BRICK2" path="Zombie_brick2" />
 <Image id="ZOMBIE_BRICK3" path="Zombie_brick3" />
+<Image id="ZOMBIE_SUPERFANIMP_HAND1" path="Zombie_superfanimp_hand1" />
+<Image id="ZOMBIE_SUPERFANIMP_HAT" path="Zombie_superfanimp_hat" />
 </Resources>
 
 <Resources id="LoadingSounds">
