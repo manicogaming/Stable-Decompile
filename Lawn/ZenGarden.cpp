@@ -117,11 +117,11 @@ void ZenGarden::DrawPottedPlant(Graphics* g, float x, float y, PottedPlant* theP
     }
 
     float aOffsetX = 0.0f;
-    float aOffsetY = PlantDrawHeightOffset(mBoard, nullptr, aSeedType, -1, -1);
+    float aOffsetY = PlantDrawHeightOffset(mBoard, nullptr, aSeedType, -1, -1, true);
     if (theDrawPot)
     {
         float aPotOffsetY = theScale * 0.0f - 0.0f + 0.0f;
-        aPotOffsetY += PlantDrawHeightOffset(mBoard, nullptr, SeedType::SEED_FLOWERPOT, -1, -1);
+        aPotOffsetY += PlantDrawHeightOffset(mBoard, nullptr, SeedType::SEED_FLOWERPOT, -1, -1, true);
 
         DrawVariation aPotVariation2 = DrawVariation::VARIATION_ZEN_GARDEN;
         if (Plant::IsAquatic(aSeedType))
@@ -728,7 +728,7 @@ void ZenGarden::AddHappyEffect(Plant* thePlant)
     }
     else
     {
-        aFlowerPot->AddAttachedParticle(aFlowerPot->mX + 40, aFlowerPot->mY + 63, aFlowerPot->mRenderOrder - 1, ParticleEffect::PARTICLE_POTTED_ZEN_GLOW);
+        aFlowerPot->AddAttachedParticle(aFlowerPot->mX + 40, aFlowerPot->mY + 63, aFlowerPot->mRenderOrder - 1, ParticleEffect::PARTICLE_POTTED_PLANT_GLOW);
     }
 }
 

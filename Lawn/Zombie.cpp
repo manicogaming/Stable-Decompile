@@ -331,20 +331,21 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
 		aBodyReanim->AssignRenderGroupToPrefix("Zombie_bungi_leftarm_hand2", RENDER_GROUP_ARMS);
 		aBodyReanim->SetTruncateDisappearingFrames(nullptr, false);
 
-		aRenderLayer = RenderLayer::RENDER_LAYER_GRAVE_STONE;
-		aRenderOffset = 7;
-		mZombieRect = Rect(-20, 22, 110, 94);
-		mZombieAttackRect = Rect(0, 0, 0, 0);
-		mVariant = false;
-		break;
-	}
-
-	case ZombieType::ZOMBIE_FOOTBALL:
-	case ZombieType::ZOMBIE_BLACK_FOOTBALL:  //0x522B6E
-		mZombieRect = Rect(50, 0, 57, 115);
-		mHelmType = HelmType::HELMTYPE_FOOTBALL;
-		mHelmHealth = 1400;
-		mAnimTicksPerFrame = 6;
+        aRenderLayer = RenderLayer::RENDER_LAYER_GRAVE_STONE;
+        aRenderOffset = 7;
+        mZombieRect = Rect(-20, 22, 110, 94);
+        mZombieAttackRect = Rect(0, 0, 0, 0);
+        mVariant = false;
+        break;
+    }
+    
+    case ZombieType::ZOMBIE_FOOTBALL:
+    case ZombieType::ZOMBIE_BLACK_FOOTBALL:  //0x522B6E
+    {
+        mZombieRect = Rect(50, 0, 57, 115);
+        mHelmType = HelmType::HELMTYPE_FOOTBALL;
+        mHelmHealth = 1400;
+        mAnimTicksPerFrame = 6;
 
 		if (mZombieType == ZombieType::ZOMBIE_BLACK_FOOTBALL)
 		{
@@ -352,9 +353,10 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
 			mHelmType = HelmType::HELMTYPE_BLACK_FOOTBALL;
 		}
 
-		mVariant = false;
-		AttachHelmet();
-		break;
+        mVariant = false;
+        AttachHelmet();
+        break;
+    }
 
 	case ZombieType::ZOMBIE_DIGGER:  //0x522BCC
 	{
@@ -1404,91 +1406,59 @@ void Zombie::PickRandomSpeed()
 //0x524C70
 void Zombie::BungeeStealTarget()
 {
-	Plant* aPlant = mBoard->GetTopPlantAt(mTargetCol, mRow, PlantPriority::TOPPLANT_BUNGEE_ORDER);
-	if (aPlant && !aPlant->NotOnGround())
-	{
-		//PlayZombieReanim("anim_hold", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f); //anim_grab 20
+    PlayZombieReanim("anim_grab", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
 
-		Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
-		if (aBodyReanim)
-			aBodyReanim->PlayReanim("anim_hold", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
+    Plant* aPlant = mBoard->GetTopPlantAt(mTargetCol, mRow, PlantPriority::TOPPLANT_BUNGEE_ORDER);
+    if (aPlant && !aPlant->NotOnGround())
+    {
+        TOD_ASSERT(aPlant->mSeedType != SeedType::SEED_GRAVEBUSTER);
 
-		mPhaseCounter = 58;
-
-		TOD_ASSERT(aPlant->mSeedType != SeedType::SEED_GRAVEBUSTER);
-
-		/*if (aPlant->mSeedType != SeedType::SEED_COBCANNON && aPlant->mSeedType != SeedType::SEED_GRAVEBUSTER)
-		{
-			mTargetPlantID = (PlantID)mBoard->mPlants.DataArrayGetID(aPlant);
-			aPlant->mOnBungeeState = PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE;
-			mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, mRow, 0);
-
-			GridItem* aLadder = mBoard->GetLadderAt(mTargetCol, mRow);
-			if (aLadder)
-			{
-				aLadder->GridItemDie();
-			}
-		}*/
-	}
-	else
-	{
-		Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-		aBodyReanim->mLoopCount = 1;
-		mPhaseCounter = 58;
-	}
+        if (aPlant->mSeedType != SeedType::SEED_COBCANNON && aPlant->mSeedType != SeedType::SEED_GRAVEBUSTER)
+        {
+            mTargetPlantID = (PlantID)mBoard->mPlants.DataArrayGetID(aPlant);
+            aPlant->mOnBungeeState = PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE;
+            mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, mRow, 0);
+        }
+    }
 }
 
 //0x524D70
 void Zombie::BungeeLiftTarget()
 {
-	Plant* aPlant = mBoard->mPlants.DataArrayTryToGet((unsigned int)mTargetPlantID);
-	if (aPlant == nullptr)
-		return;
+    PlayZombieReanim("anim_raise", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 36.0f);
 
-	PlayZombieReanim("anim_raise", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 36.0f);
+    Plant* aPlant = mBoard->mPlants.DataArrayTryToGet((unsigned int)mTargetPlantID);
+    if (aPlant == nullptr)
+        return;
 
-	Zombie* aZombie = nullptr;
-	while (mBoard->IterateZombies(aZombie))
-	{
-		if (aZombie->mZombieType == ZombieType::ZOMBIE_BUNGEE && aZombie != this && aZombie->mTargetPlantID == mTargetPlantID)
-		{
-			aZombie->mTargetPlantID = PlantID::PLANTID_NULL;  // 修复类似于 IZ 蹦极刷阳光的 Bug
-		}
-	}
+    Zombie* aZombie = nullptr;
+    while (mBoard->IterateZombies(aZombie))
+    {
+        if (aZombie->mZombieType == ZombieType::ZOMBIE_BUNGEE && aZombie != this && aZombie->mTargetPlantID == mTargetPlantID)
+        {
+            aZombie->mTargetPlantID = PlantID::PLANTID_NULL;  // 修复类似于 IZ 蹦极刷阳光的 Bug
+        }
+    }
 
+    aPlant->mOnBungeeState = PlantOnBungeeState::RISING_WITH_BUNGEE;
+    mApp->PlayFoley(FoleyType::FOLEY_FLOOP);
 
-	aPlant->mOnBungeeState = PlantOnBungeeState::RISING_WITH_BUNGEE;
-	mApp->PlayFoley(FoleyType::FOLEY_FLOOP);
-
-	Reanimation* aPlantReanim = mApp->ReanimationTryToGet(aPlant->mBodyReanimID);
-	if (aPlantReanim)
-	{
-		aPlantReanim->mAnimRate = 0.1f;
-	}
+    Reanimation* aPlantReanim = mApp->ReanimationTryToGet(aPlant->mBodyReanimID);
+    if (aPlantReanim)
+    {
+        aPlantReanim->mAnimRate = 0.1f;
+    }
 
 	if (aPlant->mSeedType == SeedType::SEED_CATTAIL && mBoard->GetTopPlantAt(mTargetCol, mRow, PlantPriority::TOPPLANT_ONLY_PUMPKIN))
 	{
 		mBoard->NewPlant(mTargetCol, mRow, SeedType::SEED_LILYPAD, SeedType::SEED_NONE);
 	}
 
-	if (aPlant->mSeedType != SeedType::SEED_COBCANNON && aPlant->mSeedType != SeedType::SEED_GRAVEBUSTER)
-	{
-		aPlant->mOnBungeeState = PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE;
-		mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, mRow, 0);
-	}
-
-	GridItem* aLadder = mBoard->GetLadderAt(mTargetCol, mRow);
-	if (aLadder)
-	{
-		aLadder->GridItemDie();
-	}
-
-	if (mApp->IsIZombieLevel())
-	{
-		mBoard->mChallenge->IZombiePlantDropRemainingSun(aPlant);
-	}
+    if (mApp->IsIZombieLevel())
+    {
+        mBoard->mChallenge->IZombiePlantDropRemainingSun(aPlant);
+    }
 }
-
 //0x524EF0
 void Zombie::BungeeLanding()
 {
@@ -1703,13 +1673,13 @@ void Zombie::UpdateZombiePogo()
 		mAltitude += HIGH_GROUND_HEIGHT;
 	}
 
-	if (mZombiePhase == ZombiePhase::PHASE_POGO_FORWARD_BOUNCE_2 && mPhaseCounter == 70)
-	{
-		Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
-		if (aPlant && (aPlant->mSeedType == SeedType::SEED_TALLNUT || aPlant->mState == PlantState::STATE_CACTUS_HIGH))
-		{
-			mApp->PlayFoley(FoleyType::FOLEY_BONK);
-			mApp->AddTodParticle(aPlant->mX + 60, aPlant->mY - 20, mRenderOrder + 1, ParticleEffect::PARTICLE_TALL_NUT_BLOCK);
+    if (mZombiePhase == ZombiePhase::PHASE_POGO_FORWARD_BOUNCE_2 && mPhaseCounter == 70)
+    {
+        Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+        if (aPlant && (aPlant->mSeedType == SeedType::SEED_TALLNUT /*|| aPlant->mState == PlantState::STATE_CACTUS_HIGH*/ || aPlant->mSeedType == SeedType::SEED_GIANT_WALLNUT))
+        {
+            mApp->PlayFoley(FoleyType::FOLEY_BONK);
+            mApp->AddTodParticle(aPlant->mX + 60, aPlant->mY - 20, mRenderOrder + 1, ParticleEffect::PARTICLE_TALL_NUT_BLOCK);
 
 			mShieldType = ShieldType::SHIELDTYPE_NONE;
 			PogoBreak(0U);
@@ -1927,39 +1897,39 @@ void Zombie::UpdateZombieFlyer()
 		}
 	}
 
-	if (mZombiePhase == ZombiePhase::PHASE_BALLOON_SWING)
-	{
-		bool aJumpEnds = false;
-		Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-		if (aBodyReanim->mLoopCount > 0)
-		{
-			mZombiePhase = ZombiePhase::PHASE_BALLOON_FLYING;
-			PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 20, aBodyReanim->mAnimRate);
-		}
-		else if (aBodyReanim->mAnimTime >= 0.39f && aBodyReanim->mAnimTime <= 0.61f)
-		{
-			mPosX -= aBodyReanim->mAnimTime * 0.1f * 55.0f;
-			if (aBodyReanim->mAnimTime >= 0.5f && aBodyReanim->mAnimTime <= 0.61f)
-			{
-				Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+    /*if (mZombiePhase == ZombiePhase::PHASE_BALLOON_SWING) 
+    {
+        bool aJumpEnds = false;
+        Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        if (aBodyReanim->mLoopCount > 0)
+        {
+            mZombiePhase = ZombiePhase::PHASE_BALLOON_FLYING;
+            PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 20, aBodyReanim->mAnimRate);
+        }
+        else if (aBodyReanim->mAnimTime >= 0.39f && aBodyReanim->mAnimTime <= 0.61f)
+        {
+            mPosX -= aBodyReanim->mAnimTime * 0.1f * 55.0f;
+            if (aBodyReanim->mAnimTime >= 0.5f && aBodyReanim->mAnimTime <= 0.61f)
+            {
+                Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
 
-				if (aPlant && aPlant->mState == PlantState::STATE_CACTUS_HIGH)
-				{
-					LandFlyer(0U);
-				}
-			}
-		}
-	}
-	else if (mZombiePhase == ZombiePhase::PHASE_BALLOON_FLYING)
-	{
-		Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
-		if (aPlant && (aPlant->mSeedType == SeedType::SEED_TALLNUT || aPlant->mState == PlantState::STATE_CACTUS_HIGH))
-		{
-			Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-			mZombiePhase = ZombiePhase::PHASE_BALLOON_SWING;
-			PlayZombieReanim("anim_swing", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 12.0f);
-		}
-	}
+                if (aPlant && aPlant->mState == PlantState::STATE_CACTUS_HIGH)
+                {
+                    LandFlyer(0U);
+                }
+            }
+        }
+    } 
+    else if (mZombiePhase == ZombiePhase::PHASE_BALLOON_FLYING) 
+    {
+        Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+        if (aPlant && (aPlant->mSeedType == SeedType::SEED_TALLNUT || aPlant->mState == PlantState::STATE_CACTUS_HIGH || aPlant->mSeedType == SeedType::SEED_GIANT_WALLNUT))
+        {
+            Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+            mZombiePhase = ZombiePhase::PHASE_BALLOON_SWING;
+            PlayZombieReanim("anim_swing", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 12.0f);
+        }
+    }*/
 
 	if (mZombiePhase == ZombiePhase::PHASE_BALLOON_POPPING)
 	{
@@ -2040,15 +2010,15 @@ void Zombie::UpdateZombiePolevaulter()
 	{
 		Reanimation* aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
 
-		bool aJumpEnds = false;
-		if (aBodyReanim->mAnimTime > 0.6f && aBodyReanim->mAnimTime <= 0.7f)
-		{
-			Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
-			if (aPlant && (aPlant->mSeedType == SeedType::SEED_TALLNUT || aPlant->mState == PlantState::STATE_CACTUS_HIGH))
-			{
-				mApp->PlayFoley(FoleyType::FOLEY_BONK);
-				aJumpEnds = true;
-				mApp->AddTodParticle(aPlant->mX + 60, aPlant->mY - 20, mRenderOrder + 1, ParticleEffect::PARTICLE_TALL_NUT_BLOCK);
+        bool aJumpEnds = false;
+        if (aBodyReanim->mAnimTime > 0.6f && aBodyReanim->mAnimTime <= 0.7f)
+        {
+            Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+            if (aPlant && (aPlant->mSeedType == SeedType::SEED_TALLNUT /*|| aPlant->mState == PlantState::STATE_CACTUS_HIGH*/ || aPlant->mSeedType == SeedType::SEED_GIANT_WALLNUT))
+            {
+                mApp->PlayFoley(FoleyType::FOLEY_BONK);
+                aJumpEnds = true;
+                mApp->AddTodParticle(aPlant->mX + 60, aPlant->mY - 20, mRenderOrder + 1, ParticleEffect::PARTICLE_TALL_NUT_BLOCK);
 
 				mZombieHeight = ZombieHeight::HEIGHT_FALLING;
 				mPosX = aPlant->mX;
@@ -5668,43 +5638,44 @@ void Zombie::AnimateChewSound()
 			mApp->AddTodParticle(mPosX + 60.0f, mPosY + 40.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_MIND_CONTROL);
 			TrySpawnLevelAward();
 
-			mVelX = 0.17f;
-			mAnimTicksPerFrame = 18;
-			UpdateAnimSpeed();
-		}
-		else if (aPlant->mSeedType == SeedType::SEED_GARLIC)
-		{
-			if (!mYuckyFace)
-			{
-				mYuckyFace = true;
-				mYuckyFaceCounter = 0;
-				UpdateAnimSpeed();
-				mApp->PlayFoley(FoleyType::FOLEY_CHOMP);
-			}
-		}
-		else
-		{
-			if (aPlant->mSeedType == SeedType::SEED_WALLNUT || aPlant->mSeedType == SeedType::SEED_TALLNUT || aPlant->mSeedType == SeedType::SEED_PUMPKINSHELL)
-			{
-				mApp->PlayFoley(FoleyType::FOLEY_CHOMP_SOFT);
-			}
-			else
-			{
-				mApp->PlayFoley(FoleyType::FOLEY_CHOMP);
-			}
-		}
-	}
-	else
-	{
-		if (mMindControlled)
-		{
-			mApp->PlayFoley(FoleyType::FOLEY_CHOMP_SOFT);
-		}
-		else
-		{
-			mApp->PlayFoley(FoleyType::FOLEY_CHOMP);
-		}
-	}
+            mVelX = 0.17f;
+            mAnimTicksPerFrame = 18;
+            UpdateAnimSpeed();
+        }
+        else if (aPlant->mSeedType == SeedType::SEED_GARLIC)
+        {
+            if (!mYuckyFace)
+            {
+                mYuckyFace = true;
+                mYuckyFaceCounter = 0;
+                UpdateAnimSpeed();
+                mApp->PlayFoley(FoleyType::FOLEY_CHOMP);
+            }
+        }
+        else
+        {
+            if (aPlant->mSeedType == SeedType::SEED_WALLNUT || aPlant->mSeedType == SeedType::SEED_TALLNUT || aPlant->mSeedType == SeedType::SEED_PUMPKINSHELL || 
+                aPlant->mSeedType == SeedType::SEED_EXPLODE_O_NUT || aPlant->mSeedType == SeedType::SEED_GIANT_WALLNUT)
+            {
+                mApp->PlayFoley(FoleyType::FOLEY_CHOMP_SOFT);
+            }
+            else
+            {
+                mApp->PlayFoley(FoleyType::FOLEY_CHOMP);
+            }
+        }
+    }
+    else
+    {
+        if (mMindControlled)
+        {
+            mApp->PlayFoley(FoleyType::FOLEY_CHOMP_SOFT);
+        }
+        else
+        {
+            mApp->PlayFoley(FoleyType::FOLEY_CHOMP);
+        }
+    }
 }
 
 //0x52BB40
@@ -5723,14 +5694,14 @@ void Zombie::AnimateChewEffect()
 		}
 	}
 
-	Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
-	if (aPlant)
-	{
-		if (aPlant->mSeedType == SeedType::SEED_WALLNUT || aPlant->mSeedType == SeedType::SEED_TALLNUT)
-		{
-			int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, mRow, 0);
-			ZombieDrawPosition aDrawPos;
-			GetDrawPos(aDrawPos);
+    Plant* aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
+    if (aPlant)
+    {
+        if (aPlant->mSeedType == SeedType::SEED_WALLNUT || aPlant->mSeedType == SeedType::SEED_TALLNUT || aPlant->mSeedType == SeedType::SEED_GIANT_WALLNUT)
+        {
+            int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, mRow, 0);
+            ZombieDrawPosition aDrawPos;
+            GetDrawPos(aDrawPos);
 
 			float aPosX = mPosX + 37.0f;
 			float aPosY = mPosY + 40.0f + aDrawPos.mBodyY;
@@ -5760,11 +5731,47 @@ void Zombie::AnimateChewEffect()
 				aPosY += 40.0f;
 			}
 
-			mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, ParticleEffect::PARTICLE_WALLNUT_EAT_SMALL);
-		}
+            mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, ParticleEffect::PARTICLE_WALLNUT_EAT_SMALL);
+        }
+        else if (aPlant->mSeedType == SeedType::SEED_EXPLODE_O_NUT)
+        {
+            int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, mRow, 0);
+            ZombieDrawPosition aDrawPos;
+            GetDrawPos(aDrawPos);
 
-		aPlant->mEatenFlashCountdown = max(aPlant->mEatenFlashCountdown, 25);
-	}
+            float aPosX = mPosX + 37.0f;
+            float aPosY = mPosY + 40.0f + aDrawPos.mBodyY;
+
+            if (mApp->IsLittleTroubleLevel() && !mInPool)
+            {
+                aPosY += 40;
+            }
+
+            if (mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER)
+            {
+                aPosX -= 7.0f;
+                aPosY += 70.0f;
+            }
+            else if (IsWalkingBackwards())
+            {
+                aPosX += 47.0f;
+            }
+            else if (mZombieType == ZombieType::ZOMBIE_BALLOON)
+            {
+                aPosY += 47.0f;
+            }
+            else if (mZombieType == ZombieType::ZOMBIE_IMP)
+            {
+                aPosX += 24.0f;
+                aPosY += 40.0f;
+            }
+
+            TodParticleSystem* aParticle = mApp->AddTodParticle(aPosX, aPosY, aRenderOrder, ParticleEffect::PARTICLE_WALLNUT_EAT_SMALL);
+            aParticle->OverrideColor(nullptr, Color(255, 64, 64));
+        }
+
+        aPlant->mEatenFlashCountdown = max(aPlant->mEatenFlashCountdown, 25);
+    }
 
 	Zombie* aZombie = FindZombieTarget();
 	if (aZombie)
@@ -6437,40 +6444,41 @@ void Zombie::DrawBungeeReanim(Graphics* g, const ZombieDrawPosition& theDrawPos)
 	DrawBungeeCord(g, -22, anOffsetY);
 	aBodyReanim->Draw(g);
 
-	Zombie* aDroppedZombie = mBoard->ZombieTryToGet(mRelatedZombieID);
-	if (aDroppedZombie)
-	{
-		Graphics aDropGraphics(*g);
-		aDropGraphics.mTransY -= mAltitude;
-		aDropGraphics.mTransX += aDroppedZombie->mPosX - mPosX;
-		//aDropGraphics.Translate(aDroppedZombie->mPosX - mPosX, -mAltitude);
+    Zombie* aDroppedZombie = mBoard->ZombieTryToGet(mRelatedZombieID);
+    if (aDroppedZombie)
+    {
+        g->PushState();
+        g->mTransY -= mAltitude;
+        g->mTransX += aDroppedZombie->mPosX - mPosX;
+        //aDropGraphics.Translate(aDroppedZombie->mPosX - mPosX, -mAltitude);
+        ZombieDrawPosition aDroppedDrawPos;
+        aDroppedZombie->GetDrawPos(aDroppedDrawPos);
+        aDroppedZombie->DrawReanim(g, aDroppedDrawPos, RENDER_GROUP_NORMAL);
+        g->PopState();
+    }
+    else
+    {
+        Plant* aPlant = mBoard->mPlants.DataArrayTryToGet((unsigned int)mTargetPlantID);
+        if (aPlant)
+        {
+            g->PushState();
+            g->mTransY += 30.0f - mAltitude;
+            if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_RISING)
+            {
+                if (aPlant->mSeedType == SeedType::SEED_SPIKEWEED || aPlant->mSeedType == SeedType::SEED_SPIKEROCK)
+                {
+                    g->mTransY -= 34.0f;
+                }
+            }
+            if (aPlant->mPlantCol <= 4 && mBoard->StageHasRoof())
+            {
+                g->mTransY += 10;
+            }
 
-		ZombieDrawPosition aDroppedDrawPos;
-		aDroppedZombie->GetDrawPos(aDroppedDrawPos);
-		aDroppedZombie->DrawReanim(&aDropGraphics, aDroppedDrawPos, RENDER_GROUP_NORMAL);
-	}
-	else
-	{
-		Plant* aPlant = mBoard->mPlants.DataArrayTryToGet((unsigned int)mTargetPlantID);
-		if (aPlant)
-		{
-			Graphics aPlantGraphics(*g);
-			aPlantGraphics.mTransY += 30.0f - mAltitude;
-			if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_RISING)
-			{
-				if (aPlant->mSeedType == SeedType::SEED_SPIKEWEED || aPlant->mSeedType == SeedType::SEED_SPIKEROCK)
-				{
-					aPlantGraphics.mTransY -= 34.0f;
-				}
-			}
-			if (aPlant->mPlantCol <= 4 && mBoard->StageHasRoof())
-			{
-				aPlantGraphics.mTransY += 10;
-			}
-
-			aPlant->Draw(&aPlantGraphics);
-		}
-	}
+            aPlant->Draw(g);
+            g->PopState();
+        }
+    }
 
 	aBodyReanim->DrawRenderGroup(g, RENDER_GROUP_ARMS);
 }
@@ -6831,9 +6839,9 @@ void Zombie::DrawBungeeCord(Graphics* g, int theOffsetX, int theOffsetY)
 	float aPosX, aPosY;
 	GetTrackPosition("Zombie_bungi_body", aPosX, aPosY);
 
-	Graphics gCord(*g);
-	gCord.SetColorizeImages(true);
-	gCord.SetColor(Color::White);
+    g->PushState();
+    g->SetColorizeImages(true);
+    g->SetColor(Color::White);
 
 	bool aSetClip = false;
 	if (IsOnBoard() && mApp->IsFinalBossLevel())
@@ -6851,51 +6859,53 @@ void Zombie::DrawBungeeCord(Graphics* g, int theOffsetX, int theOffsetY)
 			aClipAmount = 0;
 		}
 
-		if (mTargetCol > aBoss->mTargetCol)
-		{
-			gCord.SetClipRect(Rect(-gCord.mTransX, aClipAmount - gCord.mTransY, BOARD_WIDTH, BOARD_HEIGHT));
-			aSetClip = true;
-		}
-	}
+        if (mTargetCol > aBoss->mTargetCol)
+        {
+            g->SetClipRect(Rect(-g->mTransX, aClipAmount - g->mTransY, BOARD_WIDTH, BOARD_HEIGHT));
+            aSetClip = true;
+        }
+    }
 
 
 	const bool IS_CHILLED = mChilledCounter > 0 || mIceTrapCounter > 0;
 
-	if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED) {
-		gCord.SetColor(Color::Black);
-	}
-	else if (mMindControlled) {
-		gCord.SetColor(ZOMBIE_MINDCONTROLLED_COLOR);
-	}
-	else if (IS_CHILLED) {
-		gCord.SetColor(Color(75, 75, 255));
-	}
+    if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED){
+        g->SetColor(Color::Black);
+    }
+    else if (mMindControlled) {
+        g->SetColor(ZOMBIE_MINDCONTROLLED_COLOR);
+    }
+    else if (IS_CHILLED) {
+        g->SetColor(Color(75, 75, 255));
+    }
 
-	if (mJustGotShotCounter > 0)
-	{
-		int aGrayness = mJustGotShotCounter * 10;
-		Color aHighlightColor(aGrayness, aGrayness, aGrayness, 255);
-		gCord.mColor = ColorAdd(aHighlightColor, gCord.mColor);
-	}
+    if (mJustGotShotCounter > 0)
+    {   
+        int aGrayness = mJustGotShotCounter * 10;
+        Color aHighlightColor(aGrayness, aGrayness, aGrayness, 255);
+        g->mColor = ColorAdd(aHighlightColor, g->mColor);
+    }
 
-	for (float y = aPosY - aCordCelHeight; y > -aCordCelHeight; y -= aCordCelHeight)
-	{
-		TodDrawImageScaledF(&gCord, IMAGE_BUNGEECORD, theOffsetX + 61.0f - 4.0f / mScaleZombie, y - mPosY + 1, mScaleZombie, mScaleZombie);
-	}
+    for (float y = aPosY - aCordCelHeight; y > -aCordCelHeight; y -= aCordCelHeight)
+    {
+        TodDrawImageScaledF(g, IMAGE_BUNGEECORD, theOffsetX + 61.0f - 4.0f / mScaleZombie, y - mPosY + 1, mScaleZombie, mScaleZombie);
+    }
 
 
-	if (mZombiePhase != ZombiePhase::PHASE_ZOMBIE_BURNED && (mMindControlled || IS_CHILLED || mJustGotShotCounter > 0)) {
-		gCord.SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
-		for (float y = aPosY - aCordCelHeight; y > -aCordCelHeight; y -= aCordCelHeight)
-		{
-			TodDrawImageScaledF(&gCord, IMAGE_BUNGEECORD, theOffsetX + 61.0f - 4.0f / mScaleZombie, y - mPosY + 1, mScaleZombie, mScaleZombie);
-		}
-	}
+    if (mZombiePhase != ZombiePhase::PHASE_ZOMBIE_BURNED && (mMindControlled || IS_CHILLED || mJustGotShotCounter > 0)) {
+        g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
+        for (float y = aPosY - aCordCelHeight; y > -aCordCelHeight; y -= aCordCelHeight)
+        {
+            TodDrawImageScaledF(g, IMAGE_BUNGEECORD, theOffsetX + 61.0f - 4.0f / mScaleZombie, y - mPosY + 1, mScaleZombie, mScaleZombie);
+        }
+    }
 
-	/*if (aSetClip)
-	{
-		g->ClearClipRect();
-	}*/
+/*if (aSetClip)
+    {
+        g->ClearClipRect();
+    }*/
+
+    g->PopState();
 }
 
 //0x52D9E0
@@ -7342,20 +7352,21 @@ void Zombie::Draw(Graphics* g)
 		DrawButter(g, aDrawPos);
 	}
 
-	if (mAttachmentID != AttachmentID::ATTACHMENTID_NULL)
-	{
-		Graphics theParticleGraphics(*g);
-		MakeParentGraphicsFrame(&theParticleGraphics);
-		theParticleGraphics.mTransY += aDrawPos.mBodyY;
+    if (mAttachmentID != AttachmentID::ATTACHMENTID_NULL)
+    {
+        g->PushState();
+        MakeParentGraphicsFrame(g);
+        g->mTransY += aDrawPos.mBodyY;
 
-		if (aDrawPos.mClipHeight > CLIP_HEIGHT_LIMIT)
-		{
-			float aDrawHeight = 120.0f - aDrawPos.mClipHeight + 21.0f;
-			theParticleGraphics.ClipRect(mX + aDrawPos.mImageOffsetX - 400.0f, mY + aDrawPos.mImageOffsetY - 28.0f, 920, aDrawHeight);
-		}
+        if (aDrawPos.mClipHeight > CLIP_HEIGHT_LIMIT)
+        {
+            float aDrawHeight = 120.0f - aDrawPos.mClipHeight + 21.0f;
+            g->ClipRect(mX + aDrawPos.mImageOffsetX - 400.0f, mY + aDrawPos.mImageOffsetY - 28.0f, 920, aDrawHeight);
+        }
 
-		AttachmentDraw(mAttachmentID, &theParticleGraphics, false);
-	}
+        AttachmentDraw(mAttachmentID, g, false);
+        g->PopState();
+    }
 
 	g->ClearClipRect();
 
@@ -8234,17 +8245,30 @@ void Zombie::StartMindControlled()
 			}
 		}
 
-		mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
-	}
-	else
-	{
-		Zombie* aZombie = mBoard->ZombieTryToGet(mRelatedZombieID);
-		if (aZombie)
-		{
-			aZombie->mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
-			mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
-		}
-	}
+        mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
+    }
+    else
+    {
+        Zombie* aZombie = mBoard->ZombieTryToGet(mRelatedZombieID);
+        if (aZombie)
+        {
+            aZombie->mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
+            mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
+        }
+    }
+
+    if (mZombieType == ZombieType::ZOMBIE_YETI)
+    {
+        Rect aZombieRect = GetZombieRect();
+        int aCenterX = aZombieRect.mX + aZombieRect.mWidth / 2;
+        int aCenterY = aZombieRect.mY + aZombieRect.mHeight / 4;
+
+        mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
+        Coin* mCoin = mBoard->AddCoin(aCenterX - 20, aCenterY, CoinType::COIN_DIAMOND, CoinMotion::COIN_MOTION_COIN);
+        mBoard->AddCoin(aCenterX - 30, aCenterY, CoinType::COIN_DIAMOND, CoinMotion::COIN_MOTION_COIN);
+        mBoard->AddCoin(aCenterX - 40, aCenterY, CoinType::COIN_DIAMOND, CoinMotion::COIN_MOTION_COIN);
+        mBoard->AddCoin(aCenterX - 50, aCenterY, CoinType::COIN_DIAMOND, CoinMotion::COIN_MOTION_COIN);
+    }
 }
 
 //0x52FB40
@@ -8337,9 +8361,15 @@ void Zombie::EatPlant(Plant* thePlant)
 		}
 	}
 
-	if (thePlant->mPlantHealth <= 0)
-	{
-		mApp->PlaySample(SOUND_GULP);
+    if (thePlant->mPlantHealth <= 0)
+    {
+        if (thePlant->mSeedType == SeedType::SEED_EXPLODE_O_NUT)
+        {
+            thePlant->DoSpecial();
+            return;
+        }
+
+        mApp->PlaySample(SOUND_GULP);
 
 		mBoard->mPlantsEaten++;
 		thePlant->Die();
@@ -8572,9 +8602,9 @@ void Zombie::DropLoot()
 		mBoard->mKilledYeti = true;
 	}
 
-	TrySpawnLevelAward();
-	if (mDroppedLoot || mBoard->HasLevelAwardDropped() || !mBoard->CanDropLoot() || mZombieType == ZombieType::ZOMBIE_BOSS)
-		return;
+    TrySpawnLevelAward();
+    if (mDroppedLoot || mBoard->HasLevelAwardDropped() || !mBoard->CanDropLoot() || mZombieType == ZombieType::ZOMBIE_BOSS || mZombieType == ZombieType::ZOMBIE_YETI && mMindControlled)
+        return;
 
 	mDroppedLoot = true;
 	int aZombieValue = GetZombieDefinition(mZombieType).mZombieValue;
@@ -12869,6 +12899,8 @@ void Zombie::DropPropeller(unsigned int theDamageFlags)
 
 void Zombie::DropJackInTheBox()
 {
+    if (!mHasObject) return;
+
     StopZombieSound();
     PickRandomSpeed();
     //mZombiePhase = ZombiePhase::PHASE_ZOMBIE_NORMAL;

@@ -2449,16 +2449,17 @@ void Challenge::DrawSlotMachine(Graphics* g)
 	if (mApp->mGameScene == SCENE_ZOMBIES_WON)
 		return;
 
-	Graphics gBoardParent = Graphics(*g);
+	g->PushState();
 	if (mSlotMachineRollCount < 3 && mBoard->mCursorObject->mCursorType == CURSOR_TYPE_NORMAL &&
 		mChallengeState != STATECHALLENGE_SLOT_MACHINE_ROLLING && !mBoard->HasLevelAwardDropped())
 	{
-		gBoardParent.SetColor(GetFlashingColor(mBoard->mMainCounter, 75));
-		gBoardParent.SetColorizeImages(true);
+		g->SetColor(GetFlashingColor(mBoard->mMainCounter, 75));
+		g->SetColorizeImages(true);
 	}
-	gBoardParent.mTransX = mBoard->mSeedBank->mX - mBoard->mX;
-	gBoardParent.mTransY = mBoard->mSeedBank->mY - mBoard->mY;
-	mApp->ReanimationGet(mReanimChallenge)->Draw(&gBoardParent);
+	g->mTransX = mBoard->mSeedBank->mX - mBoard->mX;
+	g->mTransY = mBoard->mSeedBank->mY - mBoard->mY;
+	mApp->ReanimationGet(mReanimChallenge)->Draw(g);
+	g->PopState();
 }
 
 //0x425300
@@ -2597,18 +2598,18 @@ void Challenge::InitZombieWavesSurvival()
 	int aCapacity = min(mSurvivalStage + 1, 9);
 	while (aCapacity > 0)
 	{
-		ZombieType aRandZombie = (ZombieType)aLevelRNG.Next((unsigned long)NUM_ZOMBIE_TYPES);
+		ZombieType aRandZombie = (ZombieType)aLevelRNG.Next((unsigned long)ZombieType::NUM_ZOMBIE_TYPES);
 		if (mBoard->mZombieAllowed[aRandZombie])																	continue;
 		if (mBoard->IsZombieTypePoolOnly(aRandZombie) && !mBoard->StageHasPool())									continue;
-		if (mBoard->StageHasRoof() && (aRandZombie == ZOMBIE_DIGGER || aRandZombie == ZOMBIE_DANCER))				continue;
-		if (mBoard->StageHasGraveStones() && aRandZombie == ZOMBIE_ZAMBONI)											continue;
-		if (!mBoard->StageHasRoof() && !mApp->IsSurvivalEndless(mApp->mGameMode) && !mApp->IsLastStandEndless(mApp->mGameMode) && aRandZombie == ZOMBIE_BUNGEE)	continue;
-		if (mBoard->GetSurvivalFlagsCompleted() < 10 && aRandZombie >= ZOMBIE_REDEYE_GARGANTUAR)								continue;
-		if (mApp->IsSurvivalNormal(mApp->mGameMode) && aRandZombie > ZOMBIE_SNORKEL)								continue;
+		if (mBoard->StageHasRoof() && (aRandZombie == ZombieType::ZOMBIE_DIGGER || aRandZombie == ZombieType::ZOMBIE_DANCER))				continue;
+		if (mBoard->StageHasGraveStones() && aRandZombie == ZombieType::ZOMBIE_ZAMBONI)											continue;
+		if (!mBoard->StageHasRoof() && !mApp->IsSurvivalEndless(mApp->mGameMode) && !mApp->IsLastStandEndless(mApp->mGameMode) && aRandZombie == ZombieType::ZOMBIE_BUNGEE)	continue;
+		if (mBoard->GetSurvivalFlagsCompleted() < 10 && aRandZombie >= ZombieType::ZOMBIE_REDEYE_GARGANTUAR)								continue;
+		if (mApp->IsSurvivalNormal(mApp->mGameMode) && aRandZombie > ZombieType::ZOMBIE_SNORKEL)								continue;
 		if (mBoard->IsZombieTypeSpawnedOnly(aRandZombie) || Zombie::IsZombotany(aRandZombie) ||
-			aRandZombie == ZOMBIE_DUCKY_TUBE || aRandZombie == ZOMBIE_YETI)											continue;
-
-		mBoard->mZombieAllowed[aRandZombie] = true;
+			aRandZombie == ZombieType::ZOMBIE_DUCKY_TUBE || aRandZombie == ZombieType::ZOMBIE_YETI || 
+			aRandZombie == ZombieType::ZOMBIE_PROPELLER || aRandZombie == ZombieType::ZOMBIE_DOG_WALKER || aRandZombie == ZombieType::ZOMBIE_DOG)
+			continue;
 		aCapacity--;
 	}
 }
@@ -4415,9 +4416,12 @@ bool Challenge::PuzzleIsAwardStage()
 	if (mApp->IsAdventureMode() || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_VASEBREAKER)
 		return false;
 
-	int aGoal = mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS ? 3 : mApp->mGameMode == GAMEMODE_SCARY_POTTER_ENDLESS ? 10 : 1;
+	if (mApp->mGameMode == GameMode::GAMEMODE_SCARY_POTTER_ENDLESS && mSurvivalStage < 2)
+		return false;
 
-	return mSurvivalStage % aGoal == 0;
+	int aGoal = mApp->mGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS ? 3 : mApp->mGameMode == GameMode::GAMEMODE_SCARY_POTTER_ENDLESS ? 10 : 1;
+
+	return mSurvivalStage % aGoal == 0 || mApp->mGameMode == GameMode::GAMEMODE_SCARY_POTTER_ENDLESS && mSurvivalStage == 3;
 }
 
 //0x429980
