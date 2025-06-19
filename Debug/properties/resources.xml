@@ -529,6 +529,15 @@
 <Image id="ZOMBIE_BRICK3" path="Zombie_brick3" />
 <Image id="ZOMBIE_SUPERFANIMP_HAND1" path="Zombie_superfanimp_hand1" />
 <Image id="ZOMBIE_SUPERFANIMP_HAT" path="Zombie_superfanimp_hat" />
+<Image id="ZOMBIE_GIGASUPERFANIMP_HAT" path="Zombie_gigasuperfanimp_hat" />
+<Image id="ZOMBIE_GIGAIMP_ARM1_BONE" path="Zombie_gigaimp_arm1_bone" />
+<Image id="ZOMBIE_GIGASUPERFANIMP_HAND1" path="Zombie_gigasuperfanimp_hand1" />
+<Image id="ZOMBIE_IMPPUNT_HAT" path="Zombie_imppunt_hat" />
+<Image id="ZOMBIE_LONGBOMB_HAT" path="Zombie_longbomb_hat" />
+<Image id="ZOMBIE_IMPPUNT_ARM3_BONE" path="Zombie_imppunt_arm3_bone" />
+<Image id="ZOMBIE_LONGBOMB_ARM3_BONE" path="Zombie_longbomb_arm3_bone" />
+<Image id="ZOMBIE_IMPPUNT_HAND1" path="Zombie_imppunt_hand1" />
+<Image id="ZOMBIE_LONGBOMB_HAND1" path="Zombie_longbomb_hand1" />
 </Resources>
 
 <Resources id="LoadingSounds">

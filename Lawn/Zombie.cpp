@@ -65,6 +65,9 @@ ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES] = {  //0x69DA80
 	{ ZOMBIE_SUNDAYPAPER,       REANIM_ZOMBIE_SUNDAYPAPER,  3,      99,     1,      1000,   _S("SUNDAYPAPER_ZOMBIE") },
 	{ ZOMBIE_BRICK,             REANIM_BRICK,               6,      99,     1,		1000,   _S("BRICKHEAD_ZOMBIE") },
 	{ ZOMBIE_SUPERFAN_IMP,      REANIM_SUPERFAN_IMP,        2,		99,     1,      1000,   _S("SUPERFAN_IMP") },
+	{ ZOMBIE_GIGA_SUPERFAN_IMP, REANIM_GIGA_SUPERFAN_IMP,   3,		99,     1,      1000,   _S("GIGA_SUPERFAN_IMP") },
+	{ ZOMBIE_IMP_PUNT,			REANIM_IMP_PUNT,			2,		99,     1,      1000,   _S("IMP_PUNT") },
+	{ ZOMBIE_LONG_BOMB,			REANIM_LONG_BOMB,			3,		99,     1,      1000,   _S("LONG_BOMB") },
 };
 
 static ZombieType gBossZombieList[] = {  //0x69DE1C
@@ -949,6 +952,16 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
 		break;
 
 	case ZombieType::ZOMBIE_SUPERFAN_IMP:  //0x523576
+	case ZombieType::ZOMBIE_IMP_PUNT:  //0x523576
+		if (!IsOnBoard())
+		{
+			PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
+		}
+		break;
+
+	case ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP:  //0x523576
+	case ZombieType::ZOMBIE_LONG_BOMB:  //0x523576
+		mBodyHealth = 540;
 		if (!IsOnBoard())
 		{
 			PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
@@ -1367,7 +1380,8 @@ void Zombie::PickRandomSpeed()
 	{
 		mVelX = RandRangeFloat(0.69f, 0.96f);
 	}
-	else if (mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP)
+	else if (mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP ||
+		mZombieType == ZombieType::ZOMBIE_IMP_PUNT || mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
 	{
 		mVelX = RandRangeFloat(0.46f, 0.64f);
 	}
@@ -4050,6 +4064,48 @@ void Zombie::DropHead(unsigned int theDamageFlags)
 			OverrideParticleScale(aHatParticle);
 			aHatParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_SUPERFANIMP_HAT);
 		}
+		else if (mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP)
+		{
+			ReanimShowPrefix("hat", RENDER_GROUP_HIDDEN);
+			ReanimShowPrefix("fire1", RENDER_GROUP_HIDDEN);
+			ReanimShowPrefix("fire2", RENDER_GROUP_HIDDEN);
+			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEIMPHEAD);
+			ParticleEffect aHatEffect = ParticleEffect::PARTICLE_ZOMBIE_HELMET;
+
+			GetTrackPosition("hat", aPosX, aPosY);
+			TodParticleSystem* aHatParticle = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, aHatEffect);
+			OverrideParticleColor(aHatParticle);
+			OverrideParticleScale(aHatParticle);
+			aHatParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_GIGASUPERFANIMP_HAT);
+		}
+		else if (mZombieType == ZombieType::ZOMBIE_IMP_PUNT)
+		{
+			ReanimShowPrefix("hat", RENDER_GROUP_HIDDEN);
+			ReanimShowPrefix("fire1", RENDER_GROUP_HIDDEN);
+			ReanimShowPrefix("fire2", RENDER_GROUP_HIDDEN);
+			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEIMPHEAD);
+			ParticleEffect aHatEffect = ParticleEffect::PARTICLE_ZOMBIE_HELMET;
+
+			GetTrackPosition("hat", aPosX, aPosY);
+			TodParticleSystem* aHatParticle = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, aHatEffect);
+			OverrideParticleColor(aHatParticle);
+			OverrideParticleScale(aHatParticle);
+			aHatParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMPPUNT_HAT);
+		}
+		else if (mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
+		{
+			ReanimShowPrefix("hat", RENDER_GROUP_HIDDEN);
+			ReanimShowPrefix("fire1", RENDER_GROUP_HIDDEN);
+			ReanimShowPrefix("fire2", RENDER_GROUP_HIDDEN);
+			aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEIMPHEAD);
+			ParticleEffect aHatEffect = ParticleEffect::PARTICLE_ZOMBIE_HELMET;
+
+			GetTrackPosition("hat", aPosX, aPosY);
+			TodParticleSystem* aHatParticle = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, aHatEffect);
+			OverrideParticleColor(aHatParticle);
+			OverrideParticleScale(aHatParticle);
+			aHatParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_LONGBOMB_HAT);
+		}
     }
 
 	Reanimation* aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
@@ -4143,6 +4199,9 @@ void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags)
 		ReanimShowTrack("Zombie_disco_outerhand", RENDER_GROUP_HIDDEN);
 		break;
 	case ZombieType::ZOMBIE_SUPERFAN_IMP:
+	case ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP:
+	case ZombieType::ZOMBIE_IMP_PUNT:
+	case ZombieType::ZOMBIE_LONG_BOMB:
 		ReanimShowPrefix("Zombie_outerarm_lower", RENDER_GROUP_HIDDEN);
 		ReanimShowPrefix("glove1", RENDER_GROUP_HIDDEN);
 		break;
@@ -4252,6 +4311,18 @@ void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags)
 			GetTrackPosition("Zombie_outerarm_lower", aPosX, aPosY);
 			aBodyReanim->SetImageOverride("Zombie_outerarm_upper", IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE);
 			break;
+		case ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP:
+			GetTrackPosition("Zombie_outerarm_lower", aPosX, aPosY);
+			aBodyReanim->SetImageOverride("Zombie_outerarm_upper", IMAGE_REANIM_ZOMBIE_GIGAIMP_ARM1_BONE);
+			break;
+		case ZombieType::ZOMBIE_IMP_PUNT:
+			GetTrackPosition("Zombie_outerarm_lower", aPosX, aPosY);
+			aBodyReanim->SetImageOverride("Zombie_outerarm_upper", IMAGE_REANIM_ZOMBIE_IMPPUNT_ARM3_BONE);
+			break;
+		case ZombieType::ZOMBIE_LONG_BOMB:
+			GetTrackPosition("Zombie_outerarm_lower", aPosX, aPosY);
+			aBodyReanim->SetImageOverride("Zombie_outerarm_upper", IMAGE_REANIM_ZOMBIE_LONGBOMB_ARM3_BONE);
+			break;
 		default:
 			GetTrackPosition("Zombie_outerarm_lower", aPosX, aPosY);
 			aBodyReanim->SetImageOverride("Zombie_outerarm_upper", IMAGE_REANIM_ZOMBIE_OUTERARM_UPPER2);
@@ -4356,6 +4427,42 @@ void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags)
 				OverrideParticleColor(aGloveParticle);
 				OverrideParticleScale(aGloveParticle);
 				aGloveParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_SUPERFANIMP_HAND1);
+				break;
+			}
+			case ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP:
+			{
+				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMP_ARM2);
+				ParticleEffect aGloveEffect = ParticleEffect::PARTICLE_ZOMBIE_HELMET;
+
+				GetTrackPosition("glove1", aPosX, aPosY);
+				TodParticleSystem* aGloveParticle = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, aGloveEffect);
+				OverrideParticleColor(aGloveParticle);
+				OverrideParticleScale(aGloveParticle);
+				aGloveParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_GIGASUPERFANIMP_HAND1);
+				break;
+			}
+			case ZombieType::ZOMBIE_IMP_PUNT:
+			{
+				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMP_ARM2);
+				ParticleEffect aGloveEffect = ParticleEffect::PARTICLE_ZOMBIE_HELMET;
+
+				GetTrackPosition("glove1", aPosX, aPosY);
+				TodParticleSystem* aGloveParticle = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, aGloveEffect);
+				OverrideParticleColor(aGloveParticle);
+				OverrideParticleScale(aGloveParticle);
+				aGloveParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMPPUNT_HAND1);
+				break;
+			}
+			case ZombieType::ZOMBIE_LONG_BOMB:
+			{
+				aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMP_ARM2);
+				ParticleEffect aGloveEffect = ParticleEffect::PARTICLE_ZOMBIE_HELMET;
+
+				GetTrackPosition("glove1", aPosX, aPosY);
+				TodParticleSystem* aGloveParticle = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, aGloveEffect);
+				OverrideParticleColor(aGloveParticle);
+				OverrideParticleScale(aGloveParticle);
+				aGloveParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_LONGBOMB_HAND1);
 				break;
 			}
             }
@@ -5132,7 +5239,8 @@ void Zombie::UpdateActions()
 	{
 		UpdateZombieDog();
 	}
-	if (mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP)
+	if (mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP ||
+		mZombieType == ZombieType::ZOMBIE_IMP_PUNT || mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
 	{
 		UpdateZombieSuperFanImp();
 	}
@@ -5645,7 +5753,8 @@ void Zombie::AnimateChewEffect()
 			{
 				aPosY += 47.0f;
 			}
-			else if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP)
+			else if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP ||
+				mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_IMP_PUNT || mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
 			{
 				aPosX += 24.0f;
 				aPosY += 40.0f;
@@ -5748,7 +5857,8 @@ void Zombie::Animate()
 				aLeftHandTime = 0.33f;
 				aRightHandTime = 0.83f;
 			}
-			else if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP)
+			else if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP ||
+				mZombieType == ZombieType::ZOMBIE_IMP_PUNT || mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
 			{
 				aLeftHandTime = 0.33f;
 				aRightHandTime = 0.79f;
@@ -7259,7 +7369,9 @@ void Zombie::Draw(Graphics* g)
 		//if (mZombieType == ZombieType::ZOMBIE_DANCER || mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER)    aScale *= 1.25f;
 		int HEALTH_POSY = (mHelmType != HelmType::HELMTYPE_NONE || mZombieType == ZombieType::ZOMBIE_FOOTBALL || mZombieType == ZombieType::ZOMBIE_BLACK_FOOTBALL || mZombieType == ZombieType::ZOMBIE_DANCER ? -30 : -15) - mAltitude + (int)((1.0f - aScale) * 120);
 		int HEALTH_POSX = IsWalkingBackwards() ? -25 + 80 : 25;
-		if (mZombiePhase == ZombiePhase::PHASE_BALLOON_WALKING || mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP) HEALTH_POSY += 40;
+		if (mZombiePhase == ZombiePhase::PHASE_BALLOON_WALKING || mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP ||
+			mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_IMP_PUNT ||
+			mZombieType == ZombieType::ZOMBIE_LONG_BOMB) HEALTH_POSY += 40;
 		if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) HEALTH_POSY -= 60;
 		if (mInPool && mZombieType == ZombieType::ZOMBIE_SNORKEL)
 		{
@@ -7704,7 +7816,8 @@ void Zombie::UpdateAnimSpeed()
 	{
 		if (mZombieType == ZombieType::ZOMBIE_POLEVAULTER || mZombieType == ZombieType::ZOMBIE_BALLOON || mZombieType == ZombieType::ZOMBIE_IMP ||
 			mZombieType == ZombieType::ZOMBIE_DIGGER || mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX || mZombieType == ZombieType::ZOMBIE_SNORKEL ||
-			mZombieType == ZombieType::ZOMBIE_YETI || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP)
+			mZombieType == ZombieType::ZOMBIE_YETI || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP ||
+			mZombieType == ZombieType::ZOMBIE_IMP_PUNT || mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
 		{
 			ApplyAnimRate(20.0f);
 		}
@@ -7917,6 +8030,9 @@ void Zombie::CheckIfPreyCaught()
 		mZombieType == ZombieType::ZOMBIE_BOSS ||
 		mZombieType == ZombieType::ZOMBIE_ANGRY ||
 		mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP ||
+		mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP ||
+		mZombieType == ZombieType::ZOMBIE_IMP_PUNT ||
+		mZombieType == ZombieType::ZOMBIE_LONG_BOMB ||
 		IsBouncingPogo() ||
 		IsBobsledTeamWithSled() ||
 		mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT ||
@@ -10159,6 +10275,9 @@ void Zombie::MowDown()
 		mZombieType == ZombieType::ZOMBIE_YETI ||
 		mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER ||
 		mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP ||
+		mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP ||
+		mZombieType == ZombieType::ZOMBIE_IMP_PUNT ||
+		mZombieType == ZombieType::ZOMBIE_LONG_BOMB ||
 		IsBobsledTeamWithSled() ||
 		IsFlying() ||
 		mInPool ||
@@ -10360,7 +10479,8 @@ void Zombie::ApplyBurn()
         {
             aCharredPosY += 31.0f;
         }
-        if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP)
+        if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP 
+			|| mZombieType == ZombieType::ZOMBIE_IMP_PUNT || mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
         {
             aCharredPosX -= 6.0f;
             aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_IMP;
@@ -10852,6 +10972,9 @@ void Zombie::UpdateDeath()
 		case ZombieType::ZOMBIE_IMP:
 		case ZombieType::ZOMBIE_BOSS:
 		case ZombieType::ZOMBIE_SUPERFAN_IMP:
+		case ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP:
+		case ZombieType::ZOMBIE_IMP_PUNT:
+		case ZombieType::ZOMBIE_LONG_BOMB:
 			aFallTime = -1.0f;
 			break;
 
@@ -11191,7 +11314,8 @@ void Zombie::DrawShadow(Graphics* g)
 		}
 		aShadowOffsetY += 13.0f;
 	}
-	else if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP)
+	else if (mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP || mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP ||
+		mZombieType == ZombieType::ZOMBIE_IMP_PUNT || mZombieType == ZombieType::ZOMBIE_LONG_BOMB)
 	{
 		aScale *= 0.6f;
 		aShadowOffsetY += 7.0f;

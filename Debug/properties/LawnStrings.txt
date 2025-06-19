@@ -1264,6 +1264,24 @@ Super-Fan Imp
 [SUPERFAN_IMP_DESCRIPTION]
 Super-Fan Imp description
 
+[GIGA_SUPERFAN_IMP]
+Giga-Super-Fan Imp
+
+[GIGA_SUPERFAN_IMP_DESCRIPTION]
+Giga-Super-Fan Imp description
+
+[IMP_PUNT]
+Imp Punt
+
+[IMP_PUNT_DESCRIPTION]
+Imp Punt description
+
+[LONG_BOMB]
+Long Bomb
+
+[LONG_BOMB_DESCRIPTION]
+Long Bomb description
+
 [CRAZY_DAVE_201]
 Evening, {PLAYER_NAME}.
 [CRAZY_DAVE_202]

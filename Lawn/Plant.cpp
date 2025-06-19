@@ -1767,7 +1767,9 @@ Zombie* Plant::FindSquashTarget()
                     int aPlantX = aAttackRect.mX;
                     if (aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_POST_VAULT || aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT ||
                         aZombie->mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_IN_POOL || aZombie->mZombieType == ZombieType::ZOMBIE_IMP ||
-                        aZombie->mZombieType == ZombieType::ZOMBIE_FOOTBALL || aZombie->mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP || mApp->IsScaryPotterLevel())
+                        aZombie->mZombieType == ZombieType::ZOMBIE_FOOTBALL || aZombie->mZombieType == ZombieType::ZOMBIE_SUPERFAN_IMP ||
+                        aZombie->mZombieType == ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP || aZombie->mZombieType == ZombieType::ZOMBIE_IMP_PUNT ||
+                        aZombie->mZombieType == ZombieType::ZOMBIE_LONG_BOMB || mApp->IsScaryPotterLevel())
                     {
                         aPlantX = aAttackRect.mX - 60;
                     }
