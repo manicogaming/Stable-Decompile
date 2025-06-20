@@ -437,7 +437,7 @@ void ReanimationWidget::Draw(Graphics* g)
             TodDrawImageCenterScaledF(g, img, 89.0f, 146, 1, 1);
         else if (mReanim->mReanimationType == ReanimationType::REANIM_LADDER) 
             TodDrawImageCenterScaledF(g, img, 85, 150, 1, 1);   
-        else if (mReanim->mReanimationType == ReanimationType::REANIM_GARGANTUAR)
+        else if (mReanim->mReanimationType == ReanimationType::REANIM_GARGANTUAR || mReanim->mReanimationType == ReanimationType::REANIM_VASE_GARGANTUAR)
             TodDrawImageCenterScaledF(g, img, 87.0f, 174, 1.5f, 1.5f); // 60, 50
     }
 

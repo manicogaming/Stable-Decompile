@@ -1282,6 +1282,12 @@ Long Bomb
 [LONG_BOMB_DESCRIPTION]
 Long Bomb description
 
+[VASE_GARGANTUAR]
+Vase Gargantuar
+
+[VASE_GARGANTUAR_DESCRIPTION]
+Vase Gargantuar description
+
 [CRAZY_DAVE_201]
 Evening, {PLAYER_NAME}.
 [CRAZY_DAVE_202]

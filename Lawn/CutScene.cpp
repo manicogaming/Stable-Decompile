@@ -329,7 +329,7 @@ void CutScene::FindAndPlaceZombie(ZombieType theZombieType, bool theZombieGrid[5
 
 bool CutScene::Is2x2Zombie(ZombieType theZombieType)
 {
-	return theZombieType == ZombieType::ZOMBIE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR;
+	return theZombieType == ZombieType::ZOMBIE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_VASE_GARGANTUAR;
 }
 
 //0x439640

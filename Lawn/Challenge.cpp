@@ -2607,9 +2607,11 @@ void Challenge::InitZombieWavesSurvival()
 		if (mBoard->GetSurvivalFlagsCompleted() < 10 && aRandZombie >= ZombieType::ZOMBIE_REDEYE_GARGANTUAR)								continue;
 		if (mApp->IsSurvivalNormal(mApp->mGameMode) && aRandZombie > ZombieType::ZOMBIE_SNORKEL)								continue;
 		if (mBoard->IsZombieTypeSpawnedOnly(aRandZombie) || Zombie::IsZombotany(aRandZombie) ||
-			aRandZombie == ZombieType::ZOMBIE_DUCKY_TUBE || aRandZombie == ZombieType::ZOMBIE_YETI || 
+			aRandZombie == ZombieType::ZOMBIE_DUCKY_TUBE || aRandZombie == ZombieType::ZOMBIE_YETI ||
 			aRandZombie == ZombieType::ZOMBIE_PROPELLER || aRandZombie == ZombieType::ZOMBIE_DOG_WALKER || aRandZombie == ZombieType::ZOMBIE_DOG)
 			continue;
+
+		mBoard->mZombieAllowed[aRandZombie] = true;
 		aCapacity--;
 	}
 }

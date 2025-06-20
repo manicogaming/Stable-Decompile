@@ -2098,7 +2098,7 @@ void Plant::UpdateChomper()
             {
                 if (aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || 
                     aZombie->mZombieType == ZombieType::ZOMBIE_BOSS || aZombie->mZombieType == ZombieType::ZOMBIE_ZAMBONI || 
-                    aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT || 
+                    aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT || aZombie->mZombieType == ZombieType::ZOMBIE_VASE_GARGANTUAR ||
                     aZombie->mZombiePhase >= PHASE_BOBSLED_SLIDING && aZombie->mZombiePhase <= PHASE_BOBSLED_CRASHING)
                 {
                     doBite = true;

@@ -308,7 +308,8 @@ int Board::GetLiveGargantuarCount() {
 	Zombie* aZombie = nullptr;
 	while (IterateZombies(aZombie))
 	{
-		if (!aZombie->mDead && aZombie->mHasHead && !aZombie->IsDeadOrDying() && aZombie->IsOnBoard() && (aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))
+		if (!aZombie->mDead && aZombie->mHasHead && !aZombie->IsDeadOrDying() && aZombie->IsOnBoard() && (aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR ||
+			aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_VASE_GARGANTUAR))
 		{
 			aCount++;
 		}
@@ -5547,7 +5548,8 @@ void Board::ZombiesWon(Zombie* theZombie)
 			aZombie->mZombiePhase == ZombiePhase::PHASE_RISING_FROM_GRAVE || 
 			aZombie->mZombiePhase == ZombiePhase::PHASE_DANCER_RISING)
 		{
-			if ((aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) && 
+			if ((aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR ||
+				aZombie->mZombieType == ZombieType::ZOMBIE_VASE_GARGANTUAR) &&
 				aZombie->IsDeadOrDying() && aZombie->mPosX < 140)
 			{
 				aZombie->DieNoLoot();
@@ -9454,9 +9456,7 @@ void Board::KeyChar(SexyChar theChar)
 	}
 	if (theChar == _S('w'))
 	{
-		AddZombie(ZombieType::ZOMBIE_GIGA_SUPERFAN_IMP, Zombie::ZOMBIE_WAVE_DEBUG);
-		AddZombie(ZombieType::ZOMBIE_IMP_PUNT, Zombie::ZOMBIE_WAVE_DEBUG);
-		AddZombie(ZombieType::ZOMBIE_LONG_BOMB, Zombie::ZOMBIE_WAVE_DEBUG);
+		AddZombie(ZombieType::ZOMBIE_VASE_GARGANTUAR, Zombie::ZOMBIE_WAVE_DEBUG);
 		return;
 	}
 	if (theChar == _S('F'))

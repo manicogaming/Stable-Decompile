@@ -173,6 +173,7 @@ ReanimationParams gLawnReanimationArray[(int)ReanimationType::NUM_REANIMS] = { /
 	{ ReanimationType::REANIM_GIGA_SUPERFAN_IMP,					"reanim\\Zombie_gigasuperfanimp.reanim",			0 },
 	{ ReanimationType::REANIM_IMP_PUNT,								"reanim\\Zombie_imppunt.reanim",					0 },
 	{ ReanimationType::REANIM_LONG_BOMB,							"reanim\\Zombie_longbomb.reanim",					0 },
+	{ ReanimationType::REANIM_VASE_GARGANTUAR,						"reanim\\Zombie_vasegargantuar.reanim",				0 },
 
 };
 

@@ -3391,8 +3391,8 @@ void LawnApp::PreloadForUser()
 
 			if (mPlayerInfo->mLevel >= GetZombieDefinition(i).mStartingLevel || HasFinishedAdventure())
 			{
-				if (i == ZombieType::ZOMBIE_BOSS && i == ZombieType::ZOMBIE_CATAPULT && i == ZombieType::ZOMBIE_GARGANTUAR ||
-					i == ZombieType::ZOMBIE_DIGGER && i == ZombieType::ZOMBIE_ZAMBONI)
+				if (i == ZombieType::ZOMBIE_BOSS && i == ZombieType::ZOMBIE_CATAPULT && i == ZombieType::ZOMBIE_GARGANTUAR &&
+					i == ZombieType::ZOMBIE_DIGGER && i == ZombieType::ZOMBIE_ZAMBONI && i == ZombieType::ZOMBIE_VASE_GARGANTUAR)
 				{
 					continue;
 				}
