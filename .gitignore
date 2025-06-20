@@ -1,4 +1,9 @@
 SexyAppFramework/Debug/*
+Debug/*
 SexyAppFramework/Release/*
+Release/*
 /.vs
 /Patch
+/Debug/PlantsVsZombies.exe
+/Debug/PlantsVsZombies.ilk
+/Debug/PlantsVsZombies.pdb
