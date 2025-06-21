@@ -11204,7 +11204,7 @@ void Zombie::UpdateMowered()
         if (mZombieType == ZombieType::ZOMBIE_POLEVAULTER) {
             DropZombiePole();
         }
-        else if (mZombieType == ZombieType::ZOMBIE_NEWSPAPER) {
+        else if (mZombieType == ZombieType::ZOMBIE_NEWSPAPER || mZombieType == ZombieType::ZOMBIE_SUNDAYPAPER) {
             DropNewsPaperGlasses();
         }
         else if (mZombieType == ZombieType::ZOMBIE_BALLOON) {
