@@ -262,9 +262,6 @@ LawnApp::~LawnApp()
 	delete mProfileMgr;
 	delete mLastLevelStats;
 
-	delete mBoardCamera;
-	mBoardCamera = NULL;
-
 	mDebugTexts.clear();
 
 	mResourceManager->DeleteResources("");
@@ -1304,13 +1301,11 @@ void BetaSubmitFunc()
 //0x451880
 void LawnApp::Init()
 {
-#ifdef _DEBUG
 	DoParseCmdLine();
 	if (!mTodCheatKeys)
 	{
-		mOnlyAllowOneCopyToRun = true;
+		mOnlyAllowOneCopyToRun = false;
 	}
-#endif
 
 
 	//if (!gSexyCache->Connected() &&
@@ -3968,6 +3963,7 @@ int LawnApp::ChangeMusicL(lua_State* L)
 
 bool LawnApp::IsLastStand() {
 	bool aIsLastStand = mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND;
+	aIsLastStand |= (mGameMode >= GameMode::GAMEMODE_LAST_STAND_STAGE_1 && mGameMode <= GameMode::GAMEMODE_LAST_STAND_STAGE_5);
 	aIsLastStand |= IsLastStandEndless(mGameMode);
 	return aIsLastStand;
 }
@@ -4003,6 +3999,8 @@ void LawnApp::DrawBoardCamera(Graphics* g, SexyTransform2D theTransform, Color t
 	if (drawOnlyCamera)
 	{
 		g->PushState();
+		g->mTransX = 0;
+		g->mTransY = 0;
 		g->SetColor(Color::Black);
 		g->FillRect(gBoardBounds);
 		g->PopState();

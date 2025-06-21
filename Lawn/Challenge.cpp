@@ -1247,10 +1247,7 @@ void Challenge::MouseDownWhackAZombie(int theX, int theY)
 		{
 			mApp->PlayFoley(FOLEY_BONK);
 			mApp->AddTodParticle(theX - 3, theY + 9, RENDER_LAYER_ABOVE_UI, PARTICLE_POW);
-			if (aTopZombie->mAltitude == 0)
-				aTopZombie->TakeBodyDamage(aTopZombie->mBodyHealth, 0U);
-			else
-				aTopZombie->DieWithLoot();
+			aTopZombie->DieWithLoot();
 			mBoard->ClearCursor();
 		}
 	}
@@ -1472,8 +1469,8 @@ void Challenge::BeghouledFlashPlant(int theFlashX, int theFlashY, int theFromX, 
 	}
 
 	Plant* aFlashPlant = mBoard->GetTopPlantAt(theFlashX, theFlashY, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
-	if (aFlashPlant && aFlashPlant->mEatenFlashCountdown <= 300) 
-		aFlashPlant->mEatenFlashCountdown = 300;
+	if (aFlashPlant && aFlashPlant->mBeghouledFlashCountdown <= 300)
+		aFlashPlant->mBeghouledFlashCountdown = 300;
 }
 
 //0x422510
@@ -1485,9 +1482,9 @@ bool Challenge::BeghouledTwistFlashMatch(BeghouledBoardState* theBoardState, int
 	for (int i = 0; i < 4; i++)
 	{
 		Plant* aPlant = mBoard->GetTopPlantAt(theGridX + (i % 2), theGridY + (i / 2), PlantPriority::TOPPLANT_ANY);
-		if (aPlant && aPlant->mEatenFlashCountdown <= 300)
+		if (aPlant && aPlant->mBeghouledFlashCountdown <= 300)
 		{
-			aPlant->mEatenFlashCountdown = 300;
+			aPlant->mBeghouledFlashCountdown = 300;
 		}
 	}
 	return true;
@@ -2853,6 +2850,61 @@ void Challenge::InitZombieWaves()
 		aList[ZOMBIE_JACK_IN_THE_BOX] = true;
 		aList[ZOMBIE_GARGANTUAR] = true;
 	}
+	else if (mApp->mGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_1)
+	{
+		aList[ZOMBIE_NORMAL] = true;
+		aList[ZOMBIE_TRAFFIC_CONE] = true;
+		aList[ZOMBIE_POLEVAULTER] = true;
+		aList[ZOMBIE_PAIL] = true;
+		aList[ZOMBIE_FOOTBALL] = true;
+	}
+	else if (mApp->mGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_2)
+	{
+		aList[ZOMBIE_NORMAL] = true;
+		aList[ZOMBIE_TRAFFIC_CONE] = true;
+		aList[ZOMBIE_POLEVAULTER] = true;
+		aList[ZOMBIE_PAIL] = true;
+		aList[ZOMBIE_NEWSPAPER] = true;
+		aList[ZOMBIE_DOOR] = true;
+		aList[ZOMBIE_FOOTBALL] = true;
+		aList[ZOMBIE_DANCER] = true;
+	}
+	else if (mApp->mGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_3)
+	{
+		aList[ZOMBIE_NORMAL] = true;
+		aList[ZOMBIE_TRAFFIC_CONE] = true;
+		aList[ZOMBIE_POLEVAULTER] = true;
+		aList[ZOMBIE_PAIL] = true;
+		aList[ZOMBIE_FOOTBALL] = true;
+		aList[ZOMBIE_SNORKEL] = true;
+		aList[ZOMBIE_DOLPHIN_RIDER] = true;
+	}
+	else if (mApp->mGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_4)
+	{
+		aList[ZOMBIE_NORMAL] = true;
+		aList[ZOMBIE_TRAFFIC_CONE] = true;
+		aList[ZOMBIE_POLEVAULTER] = true;
+		aList[ZOMBIE_PAIL] = true;
+		aList[ZOMBIE_NEWSPAPER] = true;
+		aList[ZOMBIE_DOOR] = true;
+		aList[ZOMBIE_JACK_IN_THE_BOX] = true;
+		aList[ZOMBIE_BALLOON] = true;
+		aList[ZOMBIE_DIGGER] = true;
+		aList[ZOMBIE_POGO] = true;
+	}
+	else if (mApp->mGameMode == GameMode::GAMEMODE_LAST_STAND_STAGE_5)
+	{
+		aList[ZOMBIE_NORMAL] = true;
+		aList[ZOMBIE_TRAFFIC_CONE] = true;
+		aList[ZOMBIE_POLEVAULTER] = true;
+		aList[ZOMBIE_PAIL] = true;
+		aList[ZOMBIE_FOOTBALL] = true;
+		aList[ZOMBIE_POGO] = true;
+		aList[ZOMBIE_BUNGEE] = true;
+		aList[ZOMBIE_LADDER] = true;
+		aList[ZOMBIE_CATAPULT] = true;
+		aList[ZOMBIE_GARGANTUAR] = true;
+	}
 	else if (mApp->IsLastStandEndless(mApp->mGameMode))
 	{
 		aList[ZOMBIE_NORMAL] = true;
@@ -3278,8 +3330,12 @@ void Challenge::DrawStormNight(Graphics* g)
 	}
 	else
 	{
+		g->PushState();
+		g->mTransX = 0;
+		g->mTransY = 0;
 		g->SetColor(Color::Black);
 		g->FillRect(-1000, -1000, BOARD_WIDTH + 2000, BOARD_HEIGHT + 2000);
+		g->PopState();
 	}
 
 	mBoard->DrawUIBottom(g);

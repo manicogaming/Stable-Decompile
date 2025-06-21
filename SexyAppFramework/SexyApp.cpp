@@ -325,7 +325,7 @@ bool SexyApp::OpenHTMLTemplate(const std::string& theTemplateFile, const Defines
 
 	std::string anOutFilename = StrFormat("temp\\tpl%04d.html", rand()%10000);
 
-	//TODO: A better failover case?
+	//TODO: A better failover case? [already done]
 	std::fstream anOutStream(anOutFilename.c_str(), std::ios::out);
 	if (!anOutStream.is_open())
 		return false;
@@ -572,6 +572,8 @@ void SexyApp::PreDisplayHook()
 	//}
 }
 
+#include "../Sexy.TodLib/TodDebug.h"
+
 void SexyApp::InitPropertiesHook()
 {
 	// Load properties if we need to
@@ -622,9 +624,9 @@ void SexyApp::Init()
 
 	SEHCatcher::mSubmitHost = "www.popcap.com";
 
-	OutputDebugString(StrFormat("Product: %s\r\n", mProdName.c_str()).c_str());	
-	OutputDebugString(StrFormat("BuildNum: %d\r\n", mBuildNum).c_str());
-	OutputDebugString(StrFormat("BuildDate: %s\r\n", mBuildDate.c_str()).c_str());	
+	TodTrace(StrFormat("Product: %s\r\n", mProdName.c_str()).c_str());
+	TodTrace(StrFormat("BuildNum: %d\r\n", mBuildNum).c_str());
+	TodTrace(StrFormat("BuildDate: %s\r\n", mBuildDate.c_str()).c_str());
 
 	SexyAppBase::Init();
 
